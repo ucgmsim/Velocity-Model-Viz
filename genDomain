@@ -1,0 +1,74 @@
+
+# load in libraries
+from subprocess import call
+import numpy as np
+
+# set parameters
+
+# assume only two inputs (magnitude and epicentre)
+class earthquakeSource:
+    mag = 1.4
+    lon = 172.25
+    lat = -43.6
+
+# prescribe the domain limits, the box
+class domainLimits:
+    latMax = -33
+    latMin = -48
+    lonMin = 165
+    lonMax = 180
+
+# use parametric functions to define velocity model domain parameters
+from velModFunctions import calculateDomainExtents
+Domain = calculateDomainExtents(earthquakeSource)
+
+# write a shell script to call velocity model code
+from velModFunctions import writeGenerateModelShellScript
+writeGenerateModelShellScript(Domain)
+
+# execute shell script to generate velocity model
+print('Generating velocity model.\n')
+call(['bash', 'generateVeloModel.sh'])
+print('Generating velocity model. Complete.\n')
+
+# read the velocity model corners file and plot the domain on a map
+from velModFunctions import investigateVelocityModelDomain
+sliceParameters = investigateVelocityModelDomain(domainLimits)
+
+# generate shell script to extract slices
+from velModFunctions import writeExtractShellScript
+writeExtractShellScript(Domain)
+print('Extracting slices from velocity model.\n')
+call(['bash', 'extractVeloModel.sh'])
+print('Extracting slices from velocity model. Complete.\n')
+
+# convert extracted slices for plotting in GMT
+from velModFunctions import convertSlicesForGMTPlotting
+convertSlicesForGMTPlotting(sliceParameters)
+
+call(['bash', 'GMT/plotVeloModCrossSections.sh'])
+call(['bash', 'GMT/plotVeloModCrossSectionLocations.sh'])
+call(['bash', 'GMT/combinePDFs.sh'])
+
+# Relocate files and remove generated components
+call(['mkdir', 'Rapid_Model'])
+print('Moving finalised velocity model.\n')
+call(['mv', 'Velocity-Model/Rapid_Model', 'Rapid_Model'])
+print('Moving finalised velocity model. Complete.\n')
+
+print('Moving velocity model plots.\n')
+call(['mv', 'GMT/Plots', 'Rapid_Model'])
+print('Moving velocity model plots. Complete.\n')
+
+
+print('Removing generated scripts.\n')
+call(['rm', 'extractVeloModel.sh'])
+call(['rm', 'generateVeloModel.sh'])
+
+print('Rapid model generation complete.\n')
+
+
+
+
+
+

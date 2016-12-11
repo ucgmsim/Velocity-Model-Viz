@@ -38,5 +38,7 @@ Rapid_Model/
 __pycache__/
 gmt.*
 .DS_Store
+generateVeloModel.sh
+.idea/
 
 

@@ -1,37 +1,74 @@
 # python functions for automatic generation of velocity models
+import numpy as np
+import re
 
 #==================================================================================================
 #
 #           calculateDomainExtents
 #
 #==================================================================================================
-def calculateDomainExtents(earthquakeSource):
+def readDomainExtents():
 
     # generate the domain extents based on the magnitude and epicentre
-
-    print('Calculating domain extents.\n')
-    XYextent = round(earthquakeSource.mag,1)*100 # square box proportional to the magnitude to one decimal point
-    Zextent = round(earthquakeSource.mag/8,1)*100
-
-
     class Domain:
-        MODEL_VERSION = '1.65_NZ'
-        MIN_VS = 0.5
-        TOPO_TYPE = 'BULLDOZED'
-        EXTENT_Z_SPACING = 0.2
-        EXTENT_LATLON_SPACING = 0.1
-        OUTPUT_DIR = 'Rapid_Model'
-        EXTENT_ZMIN = 0
-        ORIGIN_ROT = 20
-        EXTRACTED_SLICE_PARAMETERS_DIRECTORY = 'SliceParametersNZ'
+        MODEL_VERSION=0
+        MIN_VS=0
+        TOPO_TYPE=0
+        EXTENT_Z_SPACING=0
+        EXTENT_LATLON_SPACING=0
+        OUTPUT_DIR=0
+        EXTENT_ZMIN=0
+        ORIGIN_ROT=0
+        EXTRACTED_SLICE_PARAMETERS_DIRECTORY='SliceParametersNZ'
 
-        ORIGIN_LAT = earthquakeSource.lat
-        ORIGIN_LON = earthquakeSource.lon
-        EXTENT_X = XYextent
-        EXTENT_Y = XYextent
-        EXTENT_ZMAX = Zextent
+        ORIGIN_LAT=0
+        ORIGIN_LON=0
+        EXTENT_X=0
+        EXTENT_Y=0
+        EXTENT_ZMAX=0
 
-    print('Calculating domain extents. Complete.\n')
+    print('Reading domain extents.')
+    fileName = 'Rapid_Velocity_Model_Parameters_Full.txt'
+    fid = open(fileName, 'r')
+
+    with open(fileName) as openfileobject:
+        for line in openfileobject:
+            lineVal = line.rstrip()
+            lineVal = lineVal.split('=')
+            if 'MODEL_VERSION' in lineVal[0]:
+                Domain.MODEL_VERSION = lineVal[1]
+            if 'MIN_VS' in lineVal[0]:
+                Domain.MIN_VS = float(lineVal[1])
+            if 'TOPO_TYPE' in lineVal[0]:
+                Domain.TOPO_TYPE = lineVal[1]
+            if 'EXTENT_Z_SPACING' in lineVal[0]:
+                Domain.EXTENT_Z_SPACING= float(lineVal[1])
+            if 'EXTENT_LATLON_SPACING' in lineVal[0]:
+                Domain.EXTENT_LATLON_SPACING = float(lineVal[1])
+            if 'OUTPUT_DIR' in lineVal[0]:
+                Domain.OUTPUT_DIR = lineVal[1]
+            if 'EXTENT_ZMIN' in lineVal[0]:
+                Domain.EXTENT_ZMIN = float(lineVal[1])
+            if 'EXTENT_ZMAX' in lineVal[0]:
+                Domain.EXTENT_ZMAX = float(lineVal[1])
+            if 'ORIGIN_ROT' in lineVal[0]:
+                Domain.ORIGIN_ROT = float(lineVal[1])
+            if 'EXTRACTED_SLICE_PARAMETERS_DIRECTORY' in lineVal[0]:
+                Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = lineVal[1]
+            if 'ORIGIN_LAT' in lineVal[0]:
+                Domain.ORIGIN_LAT = float(lineVal[1])
+            if 'ORIGIN_LON' in lineVal[0]:
+                Domain.ORIGIN_LON = float(lineVal[1])
+            if 'EXTENT_X' in lineVal[0]:
+                Domain.EXTENT_X = float(lineVal[1])
+            if 'EXTENT_Y' in lineVal[0]:
+                Domain.EXTENT_Y = float(lineVal[1])
+            if 'EXTENT_Z_SPACING' in lineVal[0]:
+                Domain.EXTENT_Z_SPACING = float(lineVal[1])
+
+
+
+    print('Reading of domain extents. Complete.')
     return Domain
 
 #==================================================================================================
@@ -40,7 +77,7 @@ def calculateDomainExtents(earthquakeSource):
 #
 #==================================================================================================
 def writeGenerateModelShellScript(Domain):
-    print('Writing generate velocity model shell scrip.\n')
+    print('Writing generate velocity model shell scrip.')
     fileName = 'generateVeloModel.sh'
     # write domain parameters to a shell script file that will call the velocity model
     fid =  open(fileName,'w')
@@ -61,7 +98,7 @@ def writeGenerateModelShellScript(Domain):
     fid.write('-M {0} '.format(Domain.MIN_VS))
     fid.write('-N {0} '.format(Domain.TOPO_TYPE))
     fid.close()
-    print('Writing generate velocity model shell scrip. Complete.\n')
+    print('Writing generate velocity model shell scrip. Complete.')
 
 
 #==================================================================================================
@@ -71,7 +108,7 @@ def writeGenerateModelShellScript(Domain):
 #==================================================================================================
 def writeExtractShellScript(Domain):
     fileName = 'extractVeloModel.sh'
-    print('Writing extract slices from velocity model shell scrip.\n')
+    print('Writing extract slices from velocity model shell scrip.')
 
     # write domain parameters to a shell script file that will read the velocity model and extract slices
     fid = open(fileName, 'w')
@@ -94,7 +131,7 @@ def writeExtractShellScript(Domain):
     fid.close()
 
 
-    print('Writing extract slices from velocity model shell scrip. Complete.\n')
+    print('Writing extract slices from velocity model shell scrip. Complete.')
 
 
 #==================================================================================================
@@ -135,14 +172,14 @@ def investigateVelocityModelDomain(domainLimits):
     fid.write('{0}\t{1}\n'.format(sliceParameters.modCornerLon[0], sliceParameters.modCornerLat[0]))
     fid.close()
 
-    print('Completed write of velocity model corners file.\n')
+    print('Completed write of velocity model corners file.')
     # plot a map with the velocity model domain
     directory ='GMT/Plots/'
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     call(['bash', 'GMT/plotDomainBoxOnMap.sh'])
-    print('Completed GMT plot of velocity model domain.\n')
+    print('Completed GMT plot of velocity model domain.')
 
     # check the velocity model corners are within the allowable limits
     flag = 0
@@ -157,7 +194,7 @@ def investigateVelocityModelDomain(domainLimits):
             flag = 1
 
         if flag == 1:
-            print('Velocity model exceeds the allowable domain limits.\n')
+            print('Velocity model exceeds the allowable domain limits.')
             exit(1)
 
 
@@ -190,7 +227,7 @@ def investigateVelocityModelDomain(domainLimits):
         fid.write('{0} {1} {2} {3} {4}\n'.format(latMin, latMax, lons[i], lons[i], sliceRes))
 
     fid.close()
-    print('Write of extracted slice parameters file complete.\n')
+    print('Write of extracted slice parameters file complete.')
 
     return sliceParameters
 
@@ -202,7 +239,7 @@ def investigateVelocityModelDomain(domainLimits):
 def convertSlicesForGMTPlotting(sliceParameters):
     import os
     import numpy as np
-    print('Converting slices for plotting in GMT.\n')
+    print('Converting slices for plotting in GMT.')
 
     directory = 'Velocity-Model/Rapid_Model/Extracted_Slices/'
 
@@ -339,5 +376,5 @@ def convertSlicesForGMTPlotting(sliceParameters):
         fid.write('{0} '.format(j))
     fid.write('\n')
     fid.close()
-    print('Converting slices for plotting in GMT. Complete.\n')
+    print('Converting slices for plotting in GMT. Complete.')
 

@@ -4,7 +4,7 @@
 
 echo "Plotting velocity model cross section locations on map."
 
-PATH=$PATH:/Applications/GMT-5.2.1.app/Contents/Resources/bin:/
+#PATH=$PATH:/Applications/GMT-5.1.2.app/Contents/Resources/bin:/
 
 SRTMDIR="GMT/Domain_On_Map/" # path to data
 
@@ -70,6 +70,6 @@ END
 
 done
 ps2pdf $ps $pdf
-rm $ps
+#rm $ps
 
 echo "Plotting velocity model cross section locations on map. Complete."

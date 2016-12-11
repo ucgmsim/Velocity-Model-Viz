@@ -3,13 +3,6 @@
 from subprocess import call
 import numpy as np
 
-# set parameters
-
-# assume only two inputs (magnitude and epicentre)
-class earthquakeSource:
-    mag = 1.4
-    lon = 172.25
-    lat = -43.6
 
 # prescribe the domain limits, the box
 class domainLimits:
@@ -19,53 +12,58 @@ class domainLimits:
     lonMax = 180
 
 # use parametric functions to define velocity model domain parameters
-from velModFunctions import calculateDomainExtents
-Domain = calculateDomainExtents(earthquakeSource)
+from velModFunctions import readDomainExtents
+Domain = readDomainExtents()
 
 # write a shell script to call velocity model code
 from velModFunctions import writeGenerateModelShellScript
 writeGenerateModelShellScript(Domain)
 
 # execute shell script to generate velocity model
-print('Generating velocity model.\n')
+print('Generating velocity model.')
 call(['bash', 'generateVeloModel.sh'])
-print('Generating velocity model. Complete.\n')
+print('Generating velocity model. Complete.')
 
 # read the velocity model corners file and plot the domain on a map
 from velModFunctions import investigateVelocityModelDomain
 sliceParameters = investigateVelocityModelDomain(domainLimits)
 
+
+
 # generate shell script to extract slices
 from velModFunctions import writeExtractShellScript
 writeExtractShellScript(Domain)
-print('Extracting slices from velocity model.\n')
+print('Extracting slices from velocity model.')
 call(['bash', 'extractVeloModel.sh'])
-print('Extracting slices from velocity model. Complete.\n')
+print('Extracting slices from velocity model. Complete.')
 
 # convert extracted slices for plotting in GMT
 from velModFunctions import convertSlicesForGMTPlotting
 convertSlicesForGMTPlotting(sliceParameters)
-
+call(['mkdir', 'GMT/Cross_Sections'])
+call(['mkdir', 'GMT/Cross_Sections/Cross_Section_Data'])
 call(['bash', 'GMT/plotVeloModCrossSections.sh'])
 call(['bash', 'GMT/plotVeloModCrossSectionLocations.sh'])
 call(['bash', 'GMT/combinePDFs.sh'])
 
 # Relocate files and remove generated components
+call(['rm', '-rf', 'Rapid_Model']) # remove folder if already in existence
 call(['mkdir', 'Rapid_Model'])
-print('Moving finalised velocity model.\n')
+print('Moving finalised velocity model.')
 call(['mv', 'Velocity-Model/Rapid_Model', 'Rapid_Model'])
-print('Moving finalised velocity model. Complete.\n')
+print('Moving finalised velocity model. Complete.')
 
-print('Moving velocity model plots.\n')
+print('Moving velocity model plots.')
 call(['mv', 'GMT/Plots', 'Rapid_Model'])
-print('Moving velocity model plots. Complete.\n')
+print('Moving velocity model plots. Complete.')
 
 
-print('Removing generated scripts.\n')
+print('Removing generated scripts.')
 call(['rm', 'extractVeloModel.sh'])
 call(['rm', 'generateVeloModel.sh'])
+call(['rm', '-rf','GMT/Cross_Sections/'])
 
-print('Rapid model generation complete.\n')
+print('Rapid model generation complete.')
 
 
 

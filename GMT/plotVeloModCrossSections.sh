@@ -52,7 +52,7 @@ gmt psscale -C$BASECPT_VS_BAR -X2 -Y-2 -D8.5/-.5/12.5/0.3h -K -O -Np -Ba${ZINCPL
 gmt psxy -R -J -O -T >> $ps
 
 ps2pdf $ps $pdf
-#rm $ps
+rm $ps
 
 ################# Vp
 ps="GMT/Plots/CrossSection${sliceNum}_vp.ps"
@@ -80,7 +80,7 @@ gmt psscale -C$BASECPT_VP_BAR -X2 -Y-2 -D8.5/-.5/12.5/0.3h -K -O -Np -Ba${ZINCPL
 gmt psxy -R -J -O -T >> $ps
 
 ps2pdf $ps $pdf
-#rm $ps
+rm $ps
 
 ################# Vs
 ps="GMT/Plots/CrossSection${sliceNum}_rho.ps"
@@ -109,7 +109,7 @@ gmt psscale -C$BASECPT_RHO_BAR -X2 -Y-2 -D8.5/-.5/12.5/0.3h -K -O -Np -Ba${ZINCP
 gmt psxy -R -J -O -T >> $ps
 
 ps2pdf $ps $pdf
-#rm $ps
+rm $ps
 
 done
 echo "Plotting velocity model cross sections. Complete."

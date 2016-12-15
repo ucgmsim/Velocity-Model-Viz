@@ -16,33 +16,36 @@ stringRho=""
 
 for sliceNum in ${sliceNums}
 do
-pdfRho="GMT/Plots/CrossSection${sliceNum}_rho.ps"
+pdfRho="GMT/Plots/CrossSection${sliceNum}_rho.pdf"
 stringRho="${stringRho} ${pdfRho}"
 done
 
 #gmt ps2raster -TF -F"GMT/Plots/ExtractedSlicesRho.ps" $stringRho
+pdftk $stringRho cat output "GMT/Plots/ExtractedSlicesRho.pdf"
 #rm $stringRho
 
 stringVs=""
 
 for sliceNum in ${sliceNums}
 do
-pdfVs="GMT/Plots/CrossSection${sliceNum}_vs.ps"
+pdfVs="GMT/Plots/CrossSection${sliceNum}_vs.pdf"
 stringVs="${stringVs} ${pdfVs}"
 done
 
 #gmt psconvert -TF -F"GMT/Plots/ExtractedSlicesVs.ps" $stringVs
+pdftk $stringVs cat output "GMT/Plots/ExtractedSlicesVs.pdf"
 #rm $stringVs
 
 stringVp=""
 
 for sliceNum in ${sliceNums}
 do
-pdfVp="GMT/Plots/CrossSection${sliceNum}_vp.ps"
+pdfVp="GMT/Plots/CrossSection${sliceNum}_vp.pdf"
 stringVp="${stringVp} ${pdfVp}"
 done
 
 #gmt psconvert -TF -F"GMT/Plots/ExtractedSlicesVp.ps" $stringVp
+pdftk $stringVp cat output "GMT/Plots/ExtractedSlicesVp.pdf"
 #rm $stringVp
 
 

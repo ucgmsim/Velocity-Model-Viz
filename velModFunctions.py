@@ -206,7 +206,7 @@ def investigateVelocityModelDomain(domainLimits):
 
     sliceParameters.numLatSlices = 5
     sliceParameters.numLonSlices = 5
-    sliceRes = 250
+    sliceRes = 25
 
     lats = np.linspace(latMin,latMax,sliceParameters.numLatSlices + 2)
     lons = np.linspace(lonMin, lonMax, sliceParameters.numLonSlices + 2)

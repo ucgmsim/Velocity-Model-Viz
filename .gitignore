@@ -42,3 +42,6 @@ generateVeloModel.sh
 .idea/
 
 
+/Simulation_Duration.txt
+/Rapid_Velocity_Model_Parameters_Full.txt
+/Rapid_Velocity_Model_Parameters_For_Domain_Plotting.txt

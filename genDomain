@@ -44,7 +44,8 @@ call(['mkdir', 'GMT/Cross_Sections'])
 call(['mkdir', 'GMT/Cross_Sections/Cross_Section_Data'])
 call(['bash', 'GMT/plotVeloModCrossSections.sh'])
 call(['bash', 'GMT/plotVeloModCrossSectionLocations.sh'])
-call(['bash', 'GMT/combinePDFs.sh'])
+from velModFunctions import combinePDFs
+combinePDFs()
 
 # Relocate files and remove generated components
 call(['rm', '-rf', 'Rapid_Model']) # remove folder if already in existence
@@ -62,7 +63,7 @@ print('Removing generated scripts.')
 call(['rm', 'extractVeloModel.sh'])
 call(['rm', 'generateVeloModel.sh'])
 call(['rm', '-rf','GMT/Cross_Sections/'])
-
+call(['cp', 'params_vel.py', 'Rapid_Model'])
 print('Rapid model generation complete.')
 
 

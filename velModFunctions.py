@@ -28,43 +28,23 @@ def readDomainExtents():
         EXTENT_ZMAX=0
 
     print('Reading domain extents.')
-    fileName = 'Rapid_Velocity_Model_Parameters_Full.txt'
-    fid = open(fileName, 'r')
+    from params_vel import *
 
-    with open(fileName) as openfileobject:
-        for line in openfileobject:
-            lineVal = line.rstrip()
-            lineVal = lineVal.split('=')
-            if 'MODEL_VERSION' in lineVal[0]:
-                Domain.MODEL_VERSION = lineVal[1]
-            if 'MIN_VS' in lineVal[0]:
-                Domain.MIN_VS = float(lineVal[1])
-            if 'TOPO_TYPE' in lineVal[0]:
-                Domain.TOPO_TYPE = lineVal[1]
-            if 'EXTENT_Z_SPACING' in lineVal[0]:
-                Domain.EXTENT_Z_SPACING= float(lineVal[1])
-            if 'EXTENT_LATLON_SPACING' in lineVal[0]:
-                Domain.EXTENT_LATLON_SPACING = float(lineVal[1])
-            if 'OUTPUT_DIR' in lineVal[0]:
-                Domain.OUTPUT_DIR = lineVal[1]
-            if 'EXTENT_ZMIN' in lineVal[0]:
-                Domain.EXTENT_ZMIN = float(lineVal[1])
-            if 'EXTENT_ZMAX' in lineVal[0]:
-                Domain.EXTENT_ZMAX = float(lineVal[1])
-            if 'ORIGIN_ROT' in lineVal[0]:
-                Domain.ORIGIN_ROT = float(lineVal[1])
-            if 'EXTRACTED_SLICE_PARAMETERS_DIRECTORY' in lineVal[0]:
-                Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = lineVal[1]
-            if 'ORIGIN_LAT' in lineVal[0]:
-                Domain.ORIGIN_LAT = float(lineVal[1])
-            if 'ORIGIN_LON' in lineVal[0]:
-                Domain.ORIGIN_LON = float(lineVal[1])
-            if 'EXTENT_X' in lineVal[0]:
-                Domain.EXTENT_X = float(lineVal[1])
-            if 'EXTENT_Y' in lineVal[0]:
-                Domain.EXTENT_Y = float(lineVal[1])
-            if 'EXTENT_Z_SPACING' in lineVal[0]:
-                Domain.EXTENT_Z_SPACING = float(lineVal[1])
+    Domain.MODEL_VERSION = MODEL_VERSION
+    Domain.MIN_VS = MIN_VS
+    Domain.TOPO_TYPE = TOPO_TYPE
+    Domain.EXTENT_Z_SPACING= EXTENT_Z_SPACING
+    Domain.EXTENT_LATLON_SPACING = EXTENT_LATLON_SPACING
+    Domain.OUTPUT_DIR = OUTPUT_DIR
+    Domain.EXTENT_ZMIN = EXTENT_ZMIN
+    Domain.EXTENT_ZMAX = EXTENT_ZMAX
+    Domain.ORIGIN_ROT = ORIGIN_ROT
+    Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = EXTRACTED_SLICE_PARAMETERS_DIRECTORY
+    Domain.ORIGIN_LAT = ORIGIN_LAT
+    Domain.ORIGIN_LON = ORIGIN_LON
+    Domain.EXTENT_X = EXTENT_X
+    Domain.EXTENT_Y = EXTENT_Y
+    Domain.EXTENT_Z_SPACING = EXTENT_Z_SPACING
 
 
 
@@ -378,3 +358,27 @@ def convertSlicesForGMTPlotting(sliceParameters):
     fid.close()
     print('Converting slices for plotting in GMT. Complete.')
 
+# ==================================================================================================
+#
+#           combinePDFs
+#
+# ==================================================================================================
+def combinePDFs():
+    # Loading the pyPdf Library
+    from pyPdf import PdfFileWriter, PdfFileReader
+
+    # Creating a routine that appends files to the output file
+    def append_pdf(input,output):
+    [output.addPage(input.getPage(page_num)) for page_num in range(input.numPages)]
+
+    # Creating an object where pdf pages are appended to
+    output = PdfFileWriter()
+
+    # Appending two pdf-pages from two different files
+    append_pdf(PdfFileReader(open("C:\\Research Papers\\My Conference Papers\\PBDIII\\PressureDependentVs.pdf","rb")),output)
+    append_pdf(PdfFileReader(open("C:\\Research Papers\\My Conference Papers\\PBDIII\\PBDPaperFigures.pdf","rb")),output)
+    #append_pdf(PdfFileReader(open("C:\\OpenSees\\RHSC\\output\\PI_NoPWP_5per\\RespSpectra_PressureIndepend.pdf","rb")),output)
+    #append_pdf(PdfFileReader(open("C:\\OpenSees\\RHSC\\output\\PI_NoPWP_5per\\depthProfiles_RHSC_pressureIndepend.pdf","rb")),output)
+
+    # Writing all the collected pages to a file
+    output.write(open("C:\\Research Papers\\My Conference Papers\\PBDIII\\PBDPaperFigures_All.pdf","wb"))

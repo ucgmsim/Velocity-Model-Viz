@@ -62,8 +62,11 @@ print('Moving velocity model plots. Complete.')
 print('Removing generated scripts.')
 call(['rm', 'extractVeloModel.sh'])
 call(['rm', 'generateVeloModel.sh'])
+call(['rm', 'generateVeloModel.sh'])
+call(['rm', 'generateVeloModel.sh'])
 call(['rm', '-rf','GMT/Cross_Sections/'])
-call(['cp', 'params_vel.py', 'Rapid_Model'])
+call(['rm', '-rf','Velocity-Model/SliceParametersNZ'])
+call(['cp', 'params_vel.py', 'Rapid_Model/Rapid_Model/Velocity-Model'])
 print('Rapid model generation complete.')
 
 

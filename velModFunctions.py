@@ -1,6 +1,7 @@
 # python functions for automatic generation of velocity models
 import numpy as np
 import re
+import os 
 
 #==================================================================================================
 #
@@ -186,7 +187,7 @@ def investigateVelocityModelDomain(domainLimits):
 
     sliceParameters.numLatSlices = 5
     sliceParameters.numLonSlices = 5
-    sliceRes = 25
+    sliceRes = 25 # increase to change resolution 
 
     lats = np.linspace(latMin,latMax,sliceParameters.numLatSlices + 2)
     lons = np.linspace(lonMin, lonMax, sliceParameters.numLonSlices + 2)
@@ -364,21 +365,51 @@ def convertSlicesForGMTPlotting(sliceParameters):
 #
 # ==================================================================================================
 def combinePDFs():
-    # Loading the pyPdf Library
-    from pyPdf import PdfFileWriter, PdfFileReader
 
-    # Creating a routine that appends files to the output file
-    def append_pdf(input,output):
-    [output.addPage(input.getPage(page_num)) for page_num in range(input.numPages)]
+	# Loading the pyPdf Library
+	from pyPdf import PdfFileWriter, PdfFileReader
+	# Creating a routine that appends files to the output file
+	def append_pdf(input,output):
+		[output.addPage(input.getPage(page_num)) for page_num in range(input.numPages)]
+	
+	##### Rho
+	# Creating an object where pdf pages are appended to
+	output = PdfFileWriter()
+	for j in range(1, 11):
+    		# Appending two pdf-pages from two different files
+		rho = 'GMT/Plots/CrossSection{0}_rho.pdf'.format(j)
+		append_pdf(PdfFileReader(open(rho,"rb")),output)
 
-    # Creating an object where pdf pages are appended to
-    output = PdfFileWriter()
+	# Writing all the collected pages to a file
+	output.write(open('GMT/Plots/CrossSection_rho_slices.pdf',"wb"))
 
-    # Appending two pdf-pages from two different files
-    append_pdf(PdfFileReader(open("C:\\Research Papers\\My Conference Papers\\PBDIII\\PressureDependentVs.pdf","rb")),output)
-    append_pdf(PdfFileReader(open("C:\\Research Papers\\My Conference Papers\\PBDIII\\PBDPaperFigures.pdf","rb")),output)
-    #append_pdf(PdfFileReader(open("C:\\OpenSees\\RHSC\\output\\PI_NoPWP_5per\\RespSpectra_PressureIndepend.pdf","rb")),output)
-    #append_pdf(PdfFileReader(open("C:\\OpenSees\\RHSC\\output\\PI_NoPWP_5per\\depthProfiles_RHSC_pressureIndepend.pdf","rb")),output)
+	##### Vp
+	# Creating an object where pdf pages are appended to
+	output = PdfFileWriter()
+	for j in range(1, 11):
+    		# Appending two pdf-pages from two different files
+		vp = 'GMT/Plots/CrossSection{0}_vp.pdf'.format(j)
+		append_pdf(PdfFileReader(open(vp,"rb")),output)
 
-    # Writing all the collected pages to a file
-    output.write(open("C:\\Research Papers\\My Conference Papers\\PBDIII\\PBDPaperFigures_All.pdf","wb"))
+	# Writing all the collected pages to a file
+	output.write(open('GMT/Plots/CrossSection_vp_slices.pdf',"wb"))
+
+	##### Vs
+	# Creating an object where pdf pages are appended to
+	output = PdfFileWriter()
+	for j in range(1, 11):
+    		# Appending two pdf-pages from two different files
+		vs = 'GMT/Plots/CrossSection{0}_vs.pdf'.format(j)
+		append_pdf(PdfFileReader(open(vs,"rb")),output)
+
+	# Writing all the collected pages to a file
+	output.write(open('GMT/Plots/CrossSection_vs_slices.pdf',"wb"))
+
+
+	for j in range(1, 11):
+		rho = 'GMT/Plots/CrossSection{0}_rho.pdf'.format(j)
+		vs = 'GMT/Plots/CrossSection{0}_vs.pdf'.format(j)
+		vp = 'GMT/Plots/CrossSection{0}_vp.pdf'.format(j)
+		os.remove(rho)
+		os.remove(vs)
+		os.remove(vp)

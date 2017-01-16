@@ -59,6 +59,7 @@ class Domain:
             fid.write("EXTENT_LATLON_SPACING = '{0}'\n".format(self.EXTENT_LATLON_SPACING))
             fid.write("MIN_VS = '{0}'\n".format(self.MIN_VS))
             fid.write("TOPO_TYPE= '{0}'\n\n".format(self.TOPO_TYPE))
+	    fid.write("EXTRACTED_SLICE_PARAMETERS_DIRECTORY= '{0}'\n\n".format(self.EXTRACTED_SLICE_PARAMETERS_DIRECTORY))
 
             fid.write("CODE = '{0}'\n".format(self.CODE))
             fid.write("HH = '{0:1.3f}'\n".format(self.EXTENT_LATLON_SPACING))

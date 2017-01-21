@@ -32,20 +32,20 @@ def readDomainExtents():
     from params_vel import *
 
     Domain.MODEL_VERSION = MODEL_VERSION
-    Domain.MIN_VS = MIN_VS
+    Domain.MIN_VS = float(MIN_VS)
     Domain.TOPO_TYPE = TOPO_TYPE
-    Domain.EXTENT_Z_SPACING= EXTENT_Z_SPACING
-    Domain.EXTENT_LATLON_SPACING = EXTENT_LATLON_SPACING
+    Domain.EXTENT_Z_SPACING= float(EXTENT_Z_SPACING)
+    Domain.EXTENT_LATLON_SPACING = float(EXTENT_LATLON_SPACING)
     Domain.OUTPUT_DIR = OUTPUT_DIR
-    Domain.EXTENT_ZMIN = EXTENT_ZMIN
-    Domain.EXTENT_ZMAX = EXTENT_ZMAX
-    Domain.ORIGIN_ROT = ORIGIN_ROT
+    Domain.EXTENT_ZMIN = float(EXTENT_ZMIN)
+    Domain.EXTENT_ZMAX = float(EXTENT_ZMAX)
+    Domain.ORIGIN_ROT = float(ORIGIN_ROT)
     Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = EXTRACTED_SLICE_PARAMETERS_DIRECTORY
-    Domain.ORIGIN_LAT = ORIGIN_LAT
-    Domain.ORIGIN_LON = ORIGIN_LON
-    Domain.EXTENT_X = EXTENT_X
-    Domain.EXTENT_Y = EXTENT_Y
-    Domain.EXTENT_Z_SPACING = EXTENT_Z_SPACING
+    Domain.ORIGIN_LAT = float(ORIGIN_LAT)
+    Domain.ORIGIN_LON = float(ORIGIN_LON)
+    Domain.EXTENT_X = float(EXTENT_X)
+    Domain.EXTENT_Y = float(EXTENT_Y)
+    Domain.EXTENT_Z_SPACING = float(EXTENT_Z_SPACING)
 
 
 
@@ -413,3 +413,139 @@ def combinePDFs():
 		os.remove(rho)
 		os.remove(vs)
 		os.remove(vp)
+
+# ==================================================================================================
+#
+#           genModelCorners
+#
+# ==================================================================================================
+def genModelCorners(Domain):
+    class corners:
+        CartLat = [0] * 4
+        CartLon = [0] * 4
+        Lat = [0] * 4
+        Lon = [0] * 4
+
+    corners.CartLat[3] = 0.5*(Domain.EXTENT_Y - Domain.EXTENT_LATLON_SPACING)
+    corners.CartLat[0] = 0.5*(Domain.EXTENT_Y - Domain.EXTENT_LATLON_SPACING)
+    corners.CartLat[2] = -0.5*(Domain.EXTENT_Y - Domain.EXTENT_LATLON_SPACING)
+    corners.CartLat[1] = -0.5*(Domain.EXTENT_Y - Domain.EXTENT_LATLON_SPACING)
+
+    corners.CartLon[3] = -0.5*(Domain.EXTENT_X - Domain.EXTENT_LATLON_SPACING)
+    corners.CartLon[0] = 0.5*(Domain.EXTENT_X - Domain.EXTENT_LATLON_SPACING)
+    corners.CartLon[2] = -0.5*(Domain.EXTENT_X - Domain.EXTENT_LATLON_SPACING)
+    corners.CartLon[1] = 0.5*(Domain.EXTENT_X - Domain.EXTENT_LATLON_SPACING)
+
+    FLAT_CONST = 298.256
+    ERAD = 6378.139
+    RPERD = 0.017453292
+
+    arg = Domain.ORIGIN_ROT * RPERD
+    cosA = np.cos(arg)
+    sinA = np.sin(arg)
+
+    arg = (90.0 - Domain.ORIGIN_LAT )*RPERD
+    cosT = np.cos(arg)
+    sinT = np.sin(arg)
+
+    arg = Domain.ORIGIN_LON * RPERD
+    cosP = np.cos(arg)
+    sinP = np.sin(arg)
+
+    amat = [0] * 9
+
+    amat[0] = cosA * cosT * cosP + sinA * sinP
+    amat[1] = sinA * cosT * cosP - cosA * sinP
+    amat[2] = sinT * cosP
+    amat[3] = cosA * cosT * sinP - sinA * cosP
+    amat[4] = sinA * cosT * sinP + cosA * cosP
+    amat[5] = sinT * sinP
+    amat[6] = -cosA * sinT
+    amat[7] = -sinA * sinT
+    amat[8] = cosT
+
+    det = amat[0] * (amat[4] * amat[8] - amat[7] * amat[5]) - amat[1] * (amat[3] * amat[8] - amat[6] * amat[5]) + amat[2] * (amat[3] * amat[7] -amat[6] *amat[4]);
+
+    det = 1.0 / det
+    ainv = [0] * 9
+
+    ainv[0] = det * amat[0]
+    ainv[1] = det * amat[3]
+    ainv[2] = det * amat[6]
+    ainv[3] = det * amat[1]
+    ainv[4] = det * amat[4]
+    ainv[5] = det * amat[7]
+    ainv[6] = det * amat[2]
+    ainv[7] = det * amat[5]
+    ainv[8] = det * amat[8]
+
+
+    g0 = 0.0
+    b0 = 0.0
+
+    for i in range(0, 4):
+        coords = gcproj(corners.CartLon[i] ,corners.CartLat[i], ERAD, g0, b0, amat, ainv)
+        corners.Lat[i] = coords.rlat
+        corners.Lon[i] = coords.rlon
+
+    with open('Domain/domainOutline.txt', 'w') as fid:
+        for i in range(0, 4):
+            fid.write("{0}\t".format(corners.Lon[i]))
+            fid.write("{0}\n".format(corners.Lat[i]))
+       	fid.write("{0}\t".format(corners.Lon[0]))
+       	fid.write("{0}\n".format(corners.Lat[0]))
+       	fid.close
+
+
+def gcproj(xf, yf, ref_rad, g0, b0, amat, ainv):
+
+    class coords:
+        rlon = 0
+        rlat = 0
+
+
+    rperd = 0.017453292
+
+    arg = (xf) / (ref_rad) - (b0)
+    cosB = np.cos(arg)
+    sinB = np.sin(arg)
+
+    arg = (yf) / (ref_rad) - (g0)
+    cosG = np.cos(arg)
+    sinG = np.sin(arg)
+
+    arg = np.sqrt(1.0 + sinB * sinB * sinG * sinG)
+    xp = sinG * cosB * arg
+    yp = sinB * cosG * arg
+    zp = np.sqrt(1.0 - xp * xp - yp * yp)
+
+    xg = xp * amat[0] + yp * amat[1] + zp * amat[2]
+    yg = xp * amat[3] + yp * amat[4] + zp * amat[5]
+    zg = xp * amat[6] + yp * amat[7] + zp * amat[8]
+
+
+    if zg != 0:
+        arg = np.sqrt(xg * xg + yg * yg) / zg
+        rlat = 90.0 - np.arctan(arg) / rperd
+    if zg < 0:
+        rlat = rlat - 180.0
+    else:
+        rlat = 0.0
+
+    if xg != 0:
+        arg = yg / xg;
+        rlon = np.arctan(arg) / rperd
+    else:
+        rlon = 0
+
+
+    if xg < 0:
+        rlon = rlon - 180.0
+
+    while rlon < -180.0:
+        rlon = rlon + 360.0
+
+    coords.rlat = rlat
+    coords.rlon = rlon
+
+    return coords

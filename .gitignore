@@ -35,6 +35,7 @@
 Velocity-Model/
 GMT/Cross_Sections/
 Rapid_Model/
+Domain/
 __pycache__/
 gmt.*
 .DS_Store

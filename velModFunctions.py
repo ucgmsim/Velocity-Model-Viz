@@ -34,21 +34,22 @@ def readDomainExtents():
     Domain.MODEL_VERSION = MODEL_VERSION
     Domain.MIN_VS = float(MIN_VS)
     Domain.TOPO_TYPE = TOPO_TYPE
-    Domain.EXTENT_Z_SPACING= float(EXTENT_Z_SPACING)
-    Domain.EXTENT_LATLON_SPACING = float(EXTENT_LATLON_SPACING)
+    Domain.EXTENT_Z_SPACING= float(HH)
+    Domain.EXTENT_LATLON_SPACING = float(HH)
+    Domain.HH = float(HH)
     Domain.OUTPUT_DIR = OUTPUT_DIR
     Domain.EXTENT_ZMIN = float(EXTENT_ZMIN)
     Domain.EXTENT_ZMAX = float(EXTENT_ZMAX)
-    Domain.ORIGIN_ROT = float(ORIGIN_ROT)
+    Domain.ORIGIN_ROT = float(MODEL_ROT)
     Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = EXTRACTED_SLICE_PARAMETERS_DIRECTORY
-    Domain.ORIGIN_LAT = float(ORIGIN_LAT)
-    Domain.ORIGIN_LON = float(ORIGIN_LON)
+    Domain.ORIGIN_LAT = float(MODEL_LAT)
+    Domain.ORIGIN_LON = float(MODEL_LON)
     Domain.EXTENT_X = float(EXTENT_X)
     Domain.EXTENT_Y = float(EXTENT_Y)
-    Domain.EXTENT_Z_SPACING = float(EXTENT_Z_SPACING)
-
-
-
+    Domain.NX = float(NX)
+    Domain.NY = float(NY)
+    Domain.NZ = float(NZ)
+    Domain.SIM_DURATION = float(SIM_DURATION)
     print('Reading of domain extents. Complete.')
     return Domain
 
@@ -59,25 +60,32 @@ def readDomainExtents():
 #==================================================================================================
 def writeGenerateModelShellScript(Domain):
     print('Writing generate velocity model shell scrip.')
+
+    fileName = 'Velocity-Model/Rapid_Model_Parameters_Generate.txt'
+    # write domain parameters to a textfile
+    fid =  open(fileName,'w')
+    fid.write('CALL_TYPE=GENERATE_VELOCITY_MOD\n')
+    fid.write('MODEL_VERSION={0}\n'.format(Domain.MODEL_VERSION))
+    fid.write('OUTPUT_DIR={0}\n'.format(Domain.OUTPUT_DIR))
+    fid.write('ORIGIN_LAT={0}\n'.format(Domain.ORIGIN_LAT))
+    fid.write('ORIGIN_LON={0}\n'.format(Domain.ORIGIN_LON))
+    fid.write('ORIGIN_ROT={0}\n'.format(Domain.ORIGIN_ROT))
+    fid.write('EXTENT_X={0}\n'.format(Domain.EXTENT_X))
+    fid.write('EXTENT_Y={0}\n'.format(Domain.EXTENT_Y))
+    fid.write('EXTENT_ZMAX={0}\n'.format(Domain.EXTENT_ZMAX))
+    fid.write('EXTENT_ZMIN={0}\n'.format(Domain.EXTENT_ZMIN))
+    fid.write('EXTENT_Z_SPACING={0}\n'.format(Domain.HH))
+    fid.write('EXTENT_LATLON_SPACING={0}\n'.format(Domain.HH))
+    fid.write('MIN_VS={0}\n'.format(Domain.MIN_VS))
+    fid.write('TOPO_TYPE={0}\n'.format(Domain.TOPO_TYPE))
+    fid.close()
+
     fileName = 'generateVeloModel.sh'
-    # write domain parameters to a shell script file that will call the velocity model
+    # write shell script file that will call the velocity model
     fid =  open(fileName,'w')
     fid.write('cd Velocity-Model\n')
     fid.write('rm -rf Rapid_Model\n')
-    fid.write('./NZVM -A GENERATE_VELOCITY_MOD ')
-    fid.write('-B {0} '.format(Domain.MODEL_VERSION))
-    fid.write('-C {0} '.format(Domain.OUTPUT_DIR))
-    fid.write('-D {0} '.format(Domain.ORIGIN_LAT))
-    fid.write('-E {0} '.format(Domain.ORIGIN_LON))
-    fid.write('-F {0} '.format(Domain.ORIGIN_ROT))
-    fid.write('-G {0} '.format(Domain.EXTENT_X))
-    fid.write('-H {0} '.format(Domain.EXTENT_Y))
-    fid.write('-I {0} '.format(Domain.EXTENT_ZMAX))
-    fid.write('-J {0} '.format(Domain.EXTENT_ZMIN))
-    fid.write('-K {0} '.format(Domain.EXTENT_Z_SPACING))
-    fid.write('-L {0} '.format(Domain.EXTENT_LATLON_SPACING))
-    fid.write('-M {0} '.format(Domain.MIN_VS))
-    fid.write('-N {0} '.format(Domain.TOPO_TYPE))
+    fid.write('./NZVM Rapid_Model_Parameters_Generate.txt')
     fid.close()
     print('Writing generate velocity model shell scrip. Complete.')
 
@@ -94,23 +102,28 @@ def writeExtractShellScript(Domain):
     # write domain parameters to a shell script file that will read the velocity model and extract slices
     fid = open(fileName, 'w')
     fid.write('cd Velocity-Model\n')
-    fid.write('./NZVM -A EXTRACT_VELOCITY_SLICES ')
-    fid.write('-B {0} '.format(Domain.MODEL_VERSION))
-    fid.write('-C {0} '.format(Domain.OUTPUT_DIR))
-    fid.write('-D {0} '.format(Domain.ORIGIN_LAT))
-    fid.write('-E {0} '.format(Domain.ORIGIN_LON))
-    fid.write('-F {0} '.format(Domain.ORIGIN_ROT))
-    fid.write('-G {0} '.format(Domain.EXTENT_X))
-    fid.write('-H {0} '.format(Domain.EXTENT_Y))
-    fid.write('-I {0} '.format(Domain.EXTENT_ZMAX))
-    fid.write('-J {0} '.format(Domain.EXTENT_ZMIN))
-    fid.write('-K {0} '.format(Domain.EXTENT_Z_SPACING))
-    fid.write('-L {0} '.format(Domain.EXTENT_LATLON_SPACING))
-    fid.write('-M {0} '.format(Domain.MIN_VS))
-    fid.write('-N {0} '.format(Domain.TOPO_TYPE))
-    fid.write('-O {0} '.format(Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY))
+    fid.write('./NZVM Rapid_Model_Parameters_Extract.txt')
     fid.close()
 
+    fileName = 'Velocity-Model/Rapid_Model_Parameters_Extract.txt'
+    # write domain parameters to a textfile
+    fid =  open(fileName,'w')
+    fid.write('CALL_TYPE=EXTRACT_VELOCITY_SLICES\n')
+    fid.write('MODEL_VERSION={0}\n'.format(Domain.MODEL_VERSION))
+    fid.write('OUTPUT_DIR={0}\n'.format(Domain.OUTPUT_DIR))
+    fid.write('ORIGIN_LAT={0}\n'.format(Domain.ORIGIN_LAT))
+    fid.write('ORIGIN_LON={0}\n'.format(Domain.ORIGIN_LON))
+    fid.write('ORIGIN_ROT={0}\n'.format(Domain.ORIGIN_ROT))
+    fid.write('EXTENT_X={0}\n'.format(Domain.EXTENT_X))
+    fid.write('EXTENT_Y={0}\n'.format(Domain.EXTENT_Y))
+    fid.write('EXTENT_ZMAX={0}\n'.format(Domain.EXTENT_ZMAX))
+    fid.write('EXTENT_ZMIN={0}\n'.format(Domain.EXTENT_ZMIN))
+    fid.write('EXTENT_Z_SPACING={0}\n'.format(Domain.HH))
+    fid.write('EXTENT_LATLON_SPACING={0}\n'.format(Domain.HH))
+    fid.write('MIN_VS={0}\n'.format(Domain.MIN_VS))
+    fid.write('TOPO_TYPE={0}\n'.format(Domain.TOPO_TYPE))
+    fid.write('EXTRACTED_SLICE_PARAMETERS_DIRECTORY={0}\n'.format(Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY))
+    fid.close()
 
     print('Writing extract slices from velocity model shell scrip. Complete.')
 
@@ -426,15 +439,15 @@ def genModelCorners(Domain):
         Lat = [0] * 4
         Lon = [0] * 4
 
-    corners.CartLat[3] = 0.5*(Domain.EXTENT_Y - Domain.EXTENT_LATLON_SPACING)
-    corners.CartLat[0] = 0.5*(Domain.EXTENT_Y - Domain.EXTENT_LATLON_SPACING)
-    corners.CartLat[2] = -0.5*(Domain.EXTENT_Y - Domain.EXTENT_LATLON_SPACING)
-    corners.CartLat[1] = -0.5*(Domain.EXTENT_Y - Domain.EXTENT_LATLON_SPACING)
+    corners.CartLat[3] = 0.5*(Domain.EXTENT_Y - Domain.HH)
+    corners.CartLat[0] = 0.5*(Domain.EXTENT_Y - Domain.HH)
+    corners.CartLat[2] = -0.5*(Domain.EXTENT_Y - Domain.HH)
+    corners.CartLat[1] = -0.5*(Domain.EXTENT_Y - Domain.HH)
 
-    corners.CartLon[3] = -0.5*(Domain.EXTENT_X - Domain.EXTENT_LATLON_SPACING)
-    corners.CartLon[0] = 0.5*(Domain.EXTENT_X - Domain.EXTENT_LATLON_SPACING)
-    corners.CartLon[2] = -0.5*(Domain.EXTENT_X - Domain.EXTENT_LATLON_SPACING)
-    corners.CartLon[1] = 0.5*(Domain.EXTENT_X - Domain.EXTENT_LATLON_SPACING)
+    corners.CartLon[3] = -0.5*(Domain.EXTENT_X - Domain.HH)
+    corners.CartLon[0] = 0.5*(Domain.EXTENT_X - Domain.HH)
+    corners.CartLon[2] = -0.5*(Domain.EXTENT_X - Domain.HH)
+    corners.CartLon[1] = 0.5*(Domain.EXTENT_X - Domain.HH)
 
     FLAT_CONST = 298.256
     ERAD = 6378.139
@@ -496,6 +509,7 @@ def genModelCorners(Domain):
        	fid.write("{0}\n".format(corners.Lat[0]))
        	fid.close
 
+    return corners
 
 def gcproj(xf, yf, ref_rad, g0, b0, amat, ainv):
 

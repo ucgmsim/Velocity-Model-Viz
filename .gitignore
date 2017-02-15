@@ -41,6 +41,7 @@ gmt.*
 .DS_Store
 extractVeloModel.sh
 generateVeloModel.sh
+*.pyc
 .idea/
 
 

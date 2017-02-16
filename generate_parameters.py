@@ -1,6 +1,7 @@
 import numpy as np
 import sys
 import wct
+import argparse
 
 # assume only two inputs (magnitude and epicentre)
 class earthquakeSource:
@@ -15,13 +16,13 @@ class earthquakeSource:
 
 
 class Domain:
-    def __init__(self, eq_src, output_dir, slice_params_dir, model_ver='1.65_NZ', min_vs=0.5, topo_type='BULLDOZED',
-                 extent_z_spac=0.1, extent_latlon_spac=0.1, extent_zmin=0, origin_rot=0, code='rt'):
+    def __init__(self, eq_src, output_dir, slice_params_dir, model_ver='1.65_NZ', min_vs=0.5, topo_type='BULLDOZED', hh=0.1,
+                 extent_zmin=0, origin_rot=0, code='rt'):
         self.MODEL_VERSION = model_ver
         self.MIN_VS = min_vs
         self.TOPO_TYPE = topo_type
-        self.EXTENT_Z_SPACING = extent_z_spac
-        self.HH = extent_latlon_spac
+        self.EXTENT_Z_SPACING = hh#extent_z_spac
+        self.HH = hh # extent_latlon_spac
         self.OUTPUT_DIR = output_dir
         self.EXTENT_ZMIN = extent_zmin
         self.ORIGIN_ROT = origin_rot
@@ -79,20 +80,32 @@ class Domain:
     def estimate(self):
         db = wct.WallClockDB()
         (maxT,avgT,minT) = db.estimate_wall_clock_time(self.NX,self.NY,self.NZ,self.T_MAX,512)
+# model_ver='1.65_NZ', min_vs=0.5, topo_type='BULLDOZED', hh=0.1, extent_latlon_spac=0.1, extent_zmin=0, origin_rot=0, code='rt'
+parser = argparse.ArgumentParser()
 
+parser.add_argument("mag",type=float)
+parser.add_argument("centroidDepth",type=float)
+parser.add_argument("lon",type=float)
+parser.add_argument("lat",type=float)
 
-if len(sys.argv) != 5:
-    print "Usage %s mag centroidDepth lon lat" % sys.argv[0]
-    sys.exit()
+parser.add_argument("--model", default='1.65NZ')
+parser.add_argument("--min_vs",type=float, default=0.5)
+parser.add_argument("--topo_type",default='BULLDOZED')
+parser.add_argument("--hh",type=float, default=0.1)
+parser.add_argument("--extent_zmin",type=float,default=0)
+parser.add_argument("--origin_rot",type=float,default=0)
+parser.add_argument("--code",default='rt')
+parser.add_argument("--output_dir",default="Rapid_Model")
+parser.add_argument("--slice_params_dir",default="SliceParametersNZ")
 
-mag, centroidDepth, lon, lat, = sys.argv[1:]
-eq_src = earthquakeSource(mag, centroidDepth, lon, lat)
+args = parser.parse_args()
+eq_src = earthquakeSource(args.mag, args.centroidDepth, args.lon, args.lat)
 print eq_src
-output_dir = "Rapid_Model"
-slice_params_dir = "SliceParametersNZ"
-domain = Domain(eq_src, output_dir, slice_params_dir)
+#output_dir = "Rapid_Model"
+#slice_params_dir = "SliceParametersNZ"
+domain = Domain(eq_src, args.output_dir, args.slice_params_dir,model_ver=args.model,min_vs=args.min_vs,topo_type=args.topo_type,hh=args.hh, extent_zmin=args.extent_zmin,origin_rot=args.origin_rot,code=args.code)
 domain.write()
-# domain.estimate()
+domain.estimate()
 
 
 

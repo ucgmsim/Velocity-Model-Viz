@@ -29,7 +29,9 @@ print('Generating velocity model. Complete.')
 from velModFunctions import investigateVelocityModelDomain
 sliceParameters = investigateVelocityModelDomain(domainLimits)
 
-
+import gen_cords
+import params_vel
+gen_cords.main(outdir=params_vel.OUTPUT_DIR)
 
 # generate shell script to extract slices
 from velModFunctions import writeExtractShellScript

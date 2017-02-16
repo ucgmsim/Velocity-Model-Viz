@@ -31,25 +31,25 @@ def readDomainExtents():
     print('Reading domain extents.')
     from params_vel import *
 
-    Domain.MODEL_VERSION = MODEL_VERSION
-    Domain.MIN_VS = float(MIN_VS)
-    Domain.TOPO_TYPE = TOPO_TYPE
-    Domain.EXTENT_Z_SPACING= float(HH)
-    Domain.EXTENT_LATLON_SPACING = float(HH)
-    Domain.HH = float(HH)
-    Domain.OUTPUT_DIR = OUTPUT_DIR
-    Domain.EXTENT_ZMIN = float(EXTENT_ZMIN)
-    Domain.EXTENT_ZMAX = float(EXTENT_ZMAX)
-    Domain.ORIGIN_ROT = float(MODEL_ROT)
-    Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = EXTRACTED_SLICE_PARAMETERS_DIRECTORY
-    Domain.ORIGIN_LAT = float(MODEL_LAT)
-    Domain.ORIGIN_LON = float(MODEL_LON)
-    Domain.EXTENT_X = float(EXTENT_X)
-    Domain.EXTENT_Y = float(EXTENT_Y)
-    Domain.NX = float(NX)
-    Domain.NY = float(NY)
-    Domain.NZ = float(NZ)
-    Domain.SIM_DURATION = float(SIM_DURATION)
+    Domain.MODEL_VERSION = model_version
+    Domain.MIN_VS = float(min_vs)
+    Domain.TOPO_TYPE = topo_type
+    Domain.EXTENT_Z_SPACING= float(hh)
+    Domain.EXTENT_LATLON_SPACING = float(hh)
+    Domain.HH = float(hh)
+    Domain.OUTPUT_DIR = output_directory
+    Domain.EXTENT_ZMIN = float(extent_zmin)
+    Domain.EXTENT_ZMAX = float(extent_zmax)
+    Domain.ORIGIN_ROT = float(model_rot)
+    Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = extracted_slice_parameters_directory
+    Domain.ORIGIN_LAT = float(model_lat)
+    Domain.ORIGIN_LON = float(model_lon)
+    Domain.EXTENT_X = float(extent_x)
+    Domain.EXTENT_Y = float(extent_y)
+    Domain.NX = float(nx)
+    Domain.NY = float(ny)
+    Domain.NZ = float(nz)
+    Domain.SIM_DURATION = float(sim_duration)
     print('Reading of domain extents. Complete.')
     return Domain
 
@@ -200,7 +200,7 @@ def investigateVelocityModelDomain(domainLimits):
 
     sliceParameters.numLatSlices = 5
     sliceParameters.numLonSlices = 5
-    sliceRes = 250 # increase to change resolution 
+    sliceRes = 300 # increase to change resolution 
 
     lats = np.linspace(latMin,latMax,sliceParameters.numLatSlices + 2)
     lons = np.linspace(lonMin, lonMax, sliceParameters.numLonSlices + 2)

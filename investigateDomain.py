@@ -19,7 +19,23 @@ call(['mkdir', 'Domain'])
 call(['cp', 'params_vel.py', 'Domain'])
 
 from velModFunctions import genModelCorners
-genModelCorners(Domain)
+corners = genModelCorners(Domain)
+for i in range(0, 4):
+    if (corners.Lon[i]>=domainLimits.lonMax):
+        print('Warning: velocity model corner outside of allowable limits.')
+        break
+    if (corners.Lat[i]>=domainLimits.latMax):
+        print('Warning: velocity model corner outside of allowable limits.')
+        break
+    if (corners.Lon[i]<=domainLimits.lonMin):
+        print('Warning: velocity model corner outside of allowable limits.')
+        break
+    if (corners.Lat[i]<=domainLimits.latMin):
+        print('Warning: velocity model corner outside of allowable limits.')
+        break
+
+        
+    corners.Lat[i]
 
 
 call(['bash', 'GMT/plotDomainBoxOnMapInterrogation.sh'])

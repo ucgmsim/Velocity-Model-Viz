@@ -71,7 +71,7 @@ call(['rm', '-rf','GMT/Cross_Sections/'])
 call(['rm', '-rf','Velocity-Model/SliceParametersNZ'])
 call(['rm', '-rf','gmt.conf'])
 call(['rm', '-rf','gmt.history'])
-call(['cp', 'params_vel.py', 'Rapid_Model/Rapid_Model/Velocity-Model'])
+call(['cp', 'params_vel.py', 'Rapid_Model/Rapid_Model/Velocity-Model/'])
 
 print('Rapid model generation complete.')
 

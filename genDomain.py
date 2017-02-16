@@ -28,10 +28,11 @@ print('Generating velocity model. Complete.')
 # read the velocity model corners file and plot the domain on a map
 from velModFunctions import investigateVelocityModelDomain
 sliceParameters = investigateVelocityModelDomain(domainLimits)
-
+print('Generating model params and cords.')
 import gen_cords
 import params_vel
-gen_cords.main(outdir=params_vel.OUTPUT_DIR)
+gen_cords.main(outdir=params_vel.output_directory)
+print('Generating model params and cords. Complete.')
 
 # generate shell script to extract slices
 from velModFunctions import writeExtractShellScript

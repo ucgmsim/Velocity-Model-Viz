@@ -28,11 +28,6 @@ print('Generating velocity model. Complete.')
 # read the velocity model corners file and plot the domain on a map
 from velModFunctions import investigateVelocityModelDomain
 sliceParameters = investigateVelocityModelDomain(domainLimits)
-print('Generating model params and cords.')
-import gen_cords
-import params_vel
-gen_cords.main(outdir=params_vel.output_directory)
-print('Generating model params and cords. Complete.')
 
 # generate shell script to extract slices
 from velModFunctions import writeExtractShellScript
@@ -55,8 +50,15 @@ combinePDFs()
 call(['rm', '-rf', 'Rapid_Model']) # remove folder if already in existence
 call(['mkdir', 'Rapid_Model'])
 print('Moving finalised velocity model.')
+
 call(['mv', 'Velocity-Model/Rapid_Model', 'Rapid_Model'])
 print('Moving finalised velocity model. Complete.')
+print('Generating model params and cords.')
+import gen_cords
+import params_vel
+gen_cords.main(outdir=os.path.join(params_vel.output_directory,"Rapid_Model/Velocity_Model"))
+
+print('Generating model params and cords. Complete.')
 
 print('Moving velocity model plots.')
 call(['mv', 'GMT/Plots', 'Rapid_Model'])

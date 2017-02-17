@@ -40,10 +40,10 @@ def readDomainExtents():
     Domain.OUTPUT_DIR = output_directory
     Domain.EXTENT_ZMIN = float(extent_zmin)
     Domain.EXTENT_ZMAX = float(extent_zmax)
-    Domain.ORIGIN_ROT = float(model_rot)
+    Domain.ORIGIN_ROT = float(MODEL_ROT)
     Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = extracted_slice_parameters_directory
-    Domain.ORIGIN_LAT = float(model_lat)
-    Domain.ORIGIN_LON = float(model_lon)
+    Domain.ORIGIN_LAT = float(MODEL_LAT)
+    Domain.ORIGIN_LON = float(MODEL_LON)
     Domain.EXTENT_X = float(extent_x)
     Domain.EXTENT_Y = float(extent_y)
     Domain.NX = float(nx)

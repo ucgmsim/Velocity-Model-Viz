@@ -56,7 +56,7 @@ print('Moving finalised velocity model. Complete.')
 print('Generating model params and cords.')
 import gen_cords
 import params_vel
-gen_cords.main(outdir=os.path.join(params_vel.output_directory,"Rapid_Model/Velocity_Model"))
+gen_cords.main(outdir=os.path.join(os.curdir,params_vel.output_directory,"Rapid_Model/Velocity_Model"))
 
 print('Generating model params and cords. Complete.')
 

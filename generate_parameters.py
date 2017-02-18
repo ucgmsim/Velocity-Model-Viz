@@ -24,7 +24,7 @@ class Domain:
         self.TOPO_TYPE = topo_type
         self.EXTENT_Z_SPACING = hh#extent_z_spac
         self.HH = hh # extent_latlon_spac
-        self.OUTPUT_DIR = os.path.join(os.path.abspath(os.curdir),output_dir)
+        self.OUTPUT_DIR = output_dir #os.path.join(os.path.abspath(os.curdir),output_dir)
         self.EXTENT_ZMIN = extent_zmin
         self.ORIGIN_ROT = rot
         self.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = slice_params_dir

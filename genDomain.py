@@ -2,7 +2,8 @@
 # load in libraries
 from subprocess import call
 import numpy as np
-
+import os
+import shared
 
 # prescribe the domain limits, the box
 class domainLimits:
@@ -56,7 +57,9 @@ print('Moving finalised velocity model. Complete.')
 print('Generating model params and cords.')
 import gen_cords
 import params_vel
-gen_cords.main(outdir=os.path.join(os.curdir,params_vel.output_directory,"Rapid_Model/Velocity_Model"))
+outdir = os.path.join(os.curdir,params_vel.output_directory,"Rapid_Model/Velocity_Model")
+shared.verify_user_dirs([outdir])
+gen_cords.main(outdir=outdir)
 
 print('Generating model params and cords. Complete.')
 
@@ -74,7 +77,7 @@ call(['rm', '-rf','GMT/Cross_Sections/'])
 call(['rm', '-rf','Velocity-Model/SliceParametersNZ'])
 call(['rm', '-rf','gmt.conf'])
 call(['rm', '-rf','gmt.history'])
-call(['cp', 'params_vel.py', 'Rapid_Model/Rapid_Model/Velocity-Model/'])
+call(['cp', 'params_vel.py', 'Rapid_Model/Rapid_Model/Velocity_Model/'])
 
 print('Rapid model generation complete.')
 

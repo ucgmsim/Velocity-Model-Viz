@@ -1,141 +1,31 @@
-import numpy as np
 import sys
-import wct
-import argparse
 import os
+import time
+import generate_parameters as gp
+import shutil
 import shared
 
-params_vel = 'params_vel.py'
+if __name__ == '__main__':        
+    if not os.path.exists(gp.params_vel):
+        print "Error: % must be in the directory" %params_vel
+        sys.exit(0)
 
-# assume only two inputs (magnitude and epicentre)
-class earthquakeSource:
-    def __init__(self, mag, centroidDepth, lon, lat):
-        self.mag = float(mag)
-        self.centroidDepth = float(centroidDepth)  # in km +ve downwards
-        self.lon = float(lon)
-        self.lat = float(lat)
-
-    def __str__(self):
-        return "mag = %s centroidDepth = %s lon= %s lat = %s" % (self.mag, self.centroidDepth, self.lon, self.lat)
-
-
-class Domain:
-    def __init__(self, eq_src, output_dir, slice_params_dir, model_ver='1.65_NZ', min_vs=0.5, topo_type='BULLDOZED', hh=0.1,
-                 extent_zmin=0, rot=0, code='rt'):
-        self.MODEL_VERSION = model_ver
-        self.MAG = eq_src.mag
-        self.CENTROID_DEPTH = eq_src.centroidDepth
-
-        self.MIN_VS = min_vs
-        self.TOPO_TYPE = topo_type
-        self.EXTENT_Z_SPACING = hh#extent_z_spac
-        self.HH = hh # extent_latlon_spac
-        self.OUTPUT_DIR = output_dir #os.path.join(os.path.abspath(os.curdir),output_dir)
-        self.EXTENT_ZMIN = extent_zmin
-        self.ORIGIN_ROT = rot
-        self.EXTRACTED_SLICE_PARAMETERS_DIRECTORY = slice_params_dir
-        self.CODE = code
-        self.ORIGIN_LAT = eq_src.lat
-        self.ORIGIN_LON = eq_src.lon
-	    
-        # generate the domain extents based on the magnitude and epicentre
-
-        rawXYextent = np.power(10, (0.55 * eq_src.mag - 1.2))
-        XYextent = round(2 * rawXYextent, 0)
-        rawZextent = 10 + eq_src.centroidDepth + (10 * np.power((0.5 * rawXYextent / eq_src.centroidDepth), (0.3)))
-        Zextent = round(rawZextent, 0)
-        timeExponent = max(1, 0.5 * eq_src.mag - 1)
-        tmax = np.power(10, timeExponent)
-
-
-        self.EXTENT_X = XYextent
-        self.EXTENT_Y = XYextent
-        self.EXTENT_ZMAX = Zextent
-        self.T_MAX = round(tmax,0)
-        
-
-        self.NX = 2*self.EXTENT_X / self.HH
-        self.NY = 2*self.EXTENT_Y / self.HH
-        self.NZ = self.EXTENT_ZMAX / self.HH
-        
-
-
-    def write(self):
-        with open('params_vel.py', 'w') as fid:
-
-            fid.write("# If you edited this file manually, run 'validate_paramters.py' for integrity check !!!\n\n")
-            fid.write("# The following parameters can be edited.\n")
-            fid.write("model_version = '{0}'\n".format(self.MODEL_VERSION))
-            fid.write("output_directory = '{0}'\n".format(self.OUTPUT_DIR))
-            fid.write("MODEL_LAT = '{0}'\n".format(self.ORIGIN_LAT))
-            fid.write("MODEL_LON = '{0}'\n".format(self.ORIGIN_LON))
-            fid.write("MODEL_ROT = '{0}'\n".format(self.ORIGIN_ROT))
-            fid.write("extent_x = '{0}'\n".format(self.EXTENT_X))
-            fid.write("extent_y = '{0}'\n".format(self.EXTENT_Y))
-            fid.write("extent_zmax = '{0}'\n".format(self.EXTENT_ZMAX))
-            fid.write("extent_zmin = '{0}'\n".format(self.EXTENT_ZMIN))
-            fid.write("hh = '{0:1.3f}'\n".format(self.HH))
-            fid.write("min_vs = '{0}'\n".format(self.MIN_VS))
-            fid.write("topo_type = '{0}'\n".format(self.TOPO_TYPE))
-            fid.write("extracted_slice_parameters_directory = '{0}'\n".format(self.EXTRACTED_SLICE_PARAMETERS_DIRECTORY))
-            fid.write("code = '{0}'\n\n".format(self.CODE))
-
-            fid.write("# The following parameters were used to produce this file. Do NOT CHANGE MANUALLY\n")
-            fid.write("mag = '{0:1.1f}'\n".format(self.MAG))
-            fid.write("centroidDepth = '{0:3.2f}'\n\n".format(self.CENTROID_DEPTH))
-            fid.write("# The followings are automatically generated. Do NOT CHANGE MANUALLY\n")
-            fid.write("nx = '{0:4.0f}'\n".format(self.NX)) 
-            fid.write("ny = '{0:4.0f}'\n".format(self.NY))
-            fid.write("nz = '{0:3.0f}'\n".format(self.NZ))
-            fid.write("sim_duration = '{0}'\n".format(self.T_MAX))
-            fid.write("sufx = '_{0}01-h{1:1.3f}'\n\n".format(self.CODE, self.HH))
-
-    def estimate(self):
-        db = wct.WallClockDB()
-        print "############  Generated %s\n\n"  %params_vel
-
-        with open(params_vel,'r') as f:
-            lines = f.readlines()
-            #print lines
-            for l in lines:
-                print l.strip('\n')
-
-
-        print "############  Estimated Wallclock time" 
-        (maxT,avgT,minT) = db.estimate_wall_clock_time(self.NX,self.NY,self.NZ,self.T_MAX,512)
-
-#if __name__ == '__main__':        
-def main():
-
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("mag",type=float)
-    parser.add_argument("centroidDepth",type=float)
-    parser.add_argument("lon",type=float)
-    parser.add_argument("lat",type=float)
-
-    parser.add_argument("--model_version", default='1.65_NZ')
-    parser.add_argument("--min_vs",type=float, default=0.5)
-    parser.add_argument("--topo_type",default='BULLDOZED')
-    parser.add_argument("--hh",type=float, default=0.1)
-    parser.add_argument("--extent_zmin",type=float,default=0)
-    parser.add_argument("--rot",type=float,default=0)
-    parser.add_argument("--code",default='rt')
-    parser.add_argument("--output_dir",default="Rapid_Model")
-    parser.add_argument("--slice_params_dir",default="SliceParametersNZ")
-
-    args = parser.parse_args()
-    eq_src = earthquakeSource(args.mag, args.centroidDepth, args.lon, args.lat)
-    print eq_src
-    #output_dir = "Rapid_Model"
-    #slice_params_dir = "SliceParametersNZ"
-    domain = Domain(eq_src, args.output_dir, args.slice_params_dir,model_ver=args.model_version,min_vs=args.min_vs,topo_type=args.topo_type,hh=args.hh, extent_zmin=args.extent_zmin,rot=args.rot,code=args.code)
+    import params_vel as pv
+    
+    eq_src = gp.earthquakeSource(pv.mag,pv.centroidDepth,pv.MODEL_LON,pv.MODEL_LAT)
+    domain = gp.Domain(eq_src, pv.output_directory, pv.extracted_slice_parameters_directory, model_ver=pv.model_version, min_vs=float(pv.min_vs), topo_type=pv.topo_type, hh=float(pv.hh), extent_zmin=float(pv.extent_zmin), rot=float(pv.MODEL_ROT), code=pv.code, extent_x=float(pv.extent_x), extent_y=float(pv.extent_y), extent_zmax=float(pv.extent_zmax),sim_duration=float(pv.sim_duration),flo=float(pv.flo))
+    #params_vel_backup = '%s.%s'%(gp.params_vel,time.strftime('%Y%m%d_%H%M%S'))
+    params_vel_backup = '%s.%s'%(gp.params_vel,'bak')
+    print "#####################   Backing up %s to %s"%(gp.params_vel,params_vel_backup)
+    shutil.copyfile(gp.params_vel,params_vel_backup)
     domain.write()
+    print "#####################  %s updated" %gp.params_vel
+    shared.exe('diff -y %s %s'%(params_vel_backup,gp.params_vel))
     domain.estimate()
 
 
 
 
-main()
+
+
 

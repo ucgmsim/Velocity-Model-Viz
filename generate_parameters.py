@@ -21,7 +21,7 @@ class earthquakeSource:
 
 class Domain:
     def __init__(self, eq_src, output_dir, slice_params_dir, model_ver='1.65_NZ', min_vs=0.5, topo_type='BULLDOZED', hh=0.1,
-                 extent_zmin=0, rot=0, code='rt'):
+                 extent_zmin=0, rot=0, code='rt', extent_x=None,extent_y=None,extent_zmax=None,sim_duration=None,flo=None):
         self.MODEL_VERSION = model_ver
         self.MAG = eq_src.mag
         self.CENTROID_DEPTH = eq_src.centroidDepth
@@ -47,53 +47,102 @@ class Domain:
         timeExponent = max(1, 0.5 * eq_src.mag - 1)
         tmax = np.power(10, timeExponent)
 
+        if extent_x is None:
+            self.EXTENT_X = XYextent
+        else:
+            self.EXTENT_X = extent_x
+        if extent_y is None:
+            self.EXTENT_Y = XYextent
+        else:
+            self.EXTENT_Y = extent_y
+        if extent_zmax is None:
+            self.EXTENT_ZMAX = Zextent
+        else:
+            self.EXTENT_ZMAX = extent_zmax
 
-        self.EXTENT_X = XYextent
-        self.EXTENT_Y = XYextent
-        self.EXTENT_ZMAX = Zextent
-        self.T_MAX = round(tmax,0)
-        
+        if sim_duration is None:
+            self.T_MAX = round(tmax,0)
+        else:
+            self.T_MAX = sim_duration
 
-        self.NX = 2*self.EXTENT_X / self.HH
-        self.NY = 2*self.EXTENT_Y / self.HH
-        self.NZ = self.EXTENT_ZMAX / self.HH
-        
+        if flo is None:
+            self.FLO = self.MIN_VS/(5.0*self.HH)
+        else:
+            self.FLO = flo
+
+
+        self.NX = self.i_divide(2*self.EXTENT_X, self.HH)
+        self.NY = self.i_divide(2*self.EXTENT_Y, self.HH)
+        self.NZ = self.i_divide(self.EXTENT_ZMAX, self.HH)
+
+        extent_x = self.EXTENT_X
+        while self.NX is None:
+            extent_x += 1
+            self.NX = self.i_divide(2*extent_x, self.HH)
+        if extent_x != self.EXTENT_X:
+            print "!!! Warning: extent_x is not divisible by hh. Increasing extent_x from %f to %f" %(self.EXTENT_X, extent_x)
+            self.EXTENT_X = extent_x
+
+        extent_y = self.EXTENT_Y
+        while self.NY is None:
+            extent_y += 1
+            self.NY = seif.i_divide(2*extent_y, self.HH)
+        if extent_y != self.EXTENT_Y:
+            print "!!! Warning: extent_y is not divisible by hh. Increasing extent_y from %f to %f" %(self.EXTENT_Y, extent_y)
+            self.EXTENT_Y = extent_y
+
+        extent_zmax = self.EXTENT_ZMAX
+        while self.NZ is None:
+            extent_zmax += 1
+            self.NZ = self.i_divide(extent_zmax, self.HH)
+        if extent_zmax != self.EXTENT_ZMAX:
+            print "!!! Warning: extent_zmax is not divisible by hh. Increasing extent_zmax from %f to %f" %(self.EXTENT_ZMAX, extent_zmax)
+            self.EXTENT_ZMAX = extent_zmax
+
+
+    def i_divide(self, f_numerator, f_denominator):
+        f_quotient= f_numerator/f_denominator
+        if float(int(f_quotient))*f_denominator == f_numerator: #check if f_numerator was multiple of f_denominator
+            return f_quotient
+        else:
+            return None
+
 
 
     def write(self):
         with open('params_vel.py', 'w') as fid:
 
             fid.write("# If you edited this file manually, run 'validate_paramters.py' for integrity check !!!\n\n")
-            fid.write("# The following parameters can be edited.\n")
-            fid.write("model_version = '{0}'\n".format(self.MODEL_VERSION))
-            fid.write("output_directory = '{0}'\n".format(self.OUTPUT_DIR))
+            fid.write("# Section I. Basic parameters (Manual Edit allowed)\n")
+            fid.write("mag = '{0:1.1f}'\n".format(self.MAG))
+            fid.write("centroidDepth = '{0:3.2f}'\n".format(self.CENTROID_DEPTH))
             fid.write("MODEL_LAT = '{0}'\n".format(self.ORIGIN_LAT))
             fid.write("MODEL_LON = '{0}'\n".format(self.ORIGIN_LON))
             fid.write("MODEL_ROT = '{0}'\n".format(self.ORIGIN_ROT))
+            fid.write("hh = '{0:1.3f}'\n".format(self.HH))
+            fid.write("min_vs = '{0}'\n".format(self.MIN_VS))
+
+            fid.write("model_version = '{0}'\n".format(self.MODEL_VERSION))
+            fid.write("topo_type = '{0}'\n".format(self.TOPO_TYPE))
+            fid.write("output_directory = '{0}'\n".format(self.OUTPUT_DIR))
+            fid.write("extracted_slice_parameters_directory = '{0}'\n".format(self.EXTRACTED_SLICE_PARAMETERS_DIRECTORY))
+            fid.write("code = '{0}'\n\n".format(self.CODE))
+            fid.write("# Section II. Derived parameters that can be manually editted \n")
             fid.write("extent_x = '{0}'\n".format(self.EXTENT_X))
             fid.write("extent_y = '{0}'\n".format(self.EXTENT_Y))
             fid.write("extent_zmax = '{0}'\n".format(self.EXTENT_ZMAX))
             fid.write("extent_zmin = '{0}'\n".format(self.EXTENT_ZMIN))
-            fid.write("hh = '{0:1.3f}'\n".format(self.HH))
-            fid.write("min_vs = '{0}'\n".format(self.MIN_VS))
-            fid.write("topo_type = '{0}'\n".format(self.TOPO_TYPE))
-            fid.write("extracted_slice_parameters_directory = '{0}'\n".format(self.EXTRACTED_SLICE_PARAMETERS_DIRECTORY))
-            fid.write("code = '{0}'\n\n".format(self.CODE))
+            fid.write("sim_duration = '{0}'\n".format(self.T_MAX))
+            fid.write("flo = '{0}'\n\n".format(self.FLO))
 
-            fid.write("# The following parameters were used to produce this file. Do NOT CHANGE MANUALLY\n")
-            fid.write("mag = '{0:1.1f}'\n".format(self.MAG))
-            fid.write("centroidDepth = '{0:3.2f}'\n\n".format(self.CENTROID_DEPTH))
-            fid.write("# The followings are automatically generated. Do NOT CHANGE MANUALLY\n")
+            fid.write("# Section III. Automated values. DO NOT EDIT (Manual changes will be ignored)\n")
             fid.write("nx = '{0:4.0f}'\n".format(self.NX)) 
             fid.write("ny = '{0:4.0f}'\n".format(self.NY))
             fid.write("nz = '{0:3.0f}'\n".format(self.NZ))
-            fid.write("sim_duration = '{0}'\n".format(self.T_MAX))
             fid.write("sufx = '_{0}01-h{1:1.3f}'\n\n".format(self.CODE, self.HH))
 
-    def estimate(self):
-        db = wct.WallClockDB()
+    def show_output(self):
         print "############  Generated %s\n\n"  %params_vel
-
         with open(params_vel,'r') as f:
             lines = f.readlines()
             #print lines
@@ -101,6 +150,8 @@ class Domain:
                 print l.strip('\n')
 
 
+    def estimate(self):
+        db = wct.WallClockDB()
         print "############  Estimated Wallclock time" 
         (maxT,avgT,minT) = db.estimate_wall_clock_time(self.NX,self.NY,self.NZ,self.T_MAX,512)
 
@@ -132,10 +183,10 @@ def main():
     #slice_params_dir = "SliceParametersNZ"
     domain = Domain(eq_src, args.output_dir, args.slice_params_dir,model_ver=args.model_version,min_vs=args.min_vs,topo_type=args.topo_type,hh=args.hh, extent_zmin=args.extent_zmin,rot=args.rot,code=args.code)
     domain.write()
+    domain.show_output()
     domain.estimate()
 
 
-
-
-main()
+if __name__=='__main__':
+    main()
 

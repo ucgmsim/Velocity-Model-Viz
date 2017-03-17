@@ -122,7 +122,7 @@ def writeExtractShellScript(Domain):
     fid.write('EXTENT_LATLON_SPACING={0}\n'.format(Domain.HH))
     fid.write('MIN_VS={0}\n'.format(Domain.MIN_VS))
     fid.write('TOPO_TYPE={0}\n'.format(Domain.TOPO_TYPE))
-    fid.write('EXTRACTED_SLICE_PARAMETERS_DIRECTORY={0}\n'.format(Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY))
+    fid.write('EXTRACTED_SLICE_PARAMETERS_TEXTFILE={0}\n'.format(Domain.EXTRACTED_SLICE_PARAMETERS_DIRECTORY))
     fid.close()
 
     print('Writing extract slices from velocity model shell scrip. Complete.')

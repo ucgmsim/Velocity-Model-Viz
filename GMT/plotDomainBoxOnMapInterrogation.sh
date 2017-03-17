@@ -27,7 +27,7 @@ gmt pscoast $ALL $DETAIL -S135/206/235 -K -O >> $ps
 
 
 # land
-gmt grdimage $TOPO $ILLU $PALETTE $ALL -K -O >> $ps
+gmt grdimage $TOPO $PALETTE $ALL -K -O >> $ps
 
 # clear clippath
 gmt pscoast -R -J -O -K -Q >> $ps

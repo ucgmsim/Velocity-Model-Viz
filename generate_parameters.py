@@ -20,7 +20,7 @@ class earthquakeSource:
 
 
 class Domain:
-    def __init__(self, eq_src, output_dir, slice_params_dir, model_ver='1.65_NZ', min_vs=0.5, topo_type='BULLDOZED', hh=0.1,
+    def __init__(self, eq_src, output_dir, slice_params_dir, model_ver='1.65', min_vs=0.5, topo_type='SQUASHED_TAPERED', hh=0.1,
                  extent_zmin=0, rot=0, code='rt', extent_x=None,extent_y=None,extent_zmax=None,sim_duration=None,flo=None):
         self.MODEL_VERSION = model_ver
         self.MAG = eq_src.mag
@@ -174,13 +174,13 @@ def main():
     parser.add_argument("--rot",type=float,default=0)
     parser.add_argument("--code",default='rt')
     parser.add_argument("--output_dir",default="Rapid_Model")
-    parser.add_argument("--slice_params_dir",default="SliceParametersNZ")
+    parser.add_argument("--slice_params_dir",default="SliceParametersNZ/SliceParametersExtracted.txt")
 
     args = parser.parse_args()
     eq_src = earthquakeSource(args.mag, args.centroidDepth, args.lon, args.lat)
     print eq_src
     #output_dir = "Rapid_Model"
-    #slice_params_dir = "SliceParametersNZ"
+    #slice_params_dir = "SliceParametersNZ/SliceParametersExtracted.txt"
     domain = Domain(eq_src, args.output_dir, args.slice_params_dir,model_ver=args.model_version,min_vs=args.min_vs,topo_type=args.topo_type,hh=args.hh, extent_zmin=args.extent_zmin,rot=args.rot,code=args.code)
     domain.write()
     domain.show_output()

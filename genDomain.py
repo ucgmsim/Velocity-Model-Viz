@@ -55,11 +55,11 @@ print('Moving finalised velocity model.')
 call(['mv', 'Velocity-Model/Rapid_Model', 'Rapid_Model'])
 print('Moving finalised velocity model. Complete.')
 print('Generating model params and cords.')
-#import gen_cords
-#import params_vel
-#outdir = os.path.join(os.curdir,params_vel.output_directory,"Rapid_Model/Velocity_Model")
-#shared.verify_user_dirs([outdir])
-#gen_cords.main(outdir=outdir)
+import gen_cords
+import params_vel
+outdir = os.path.join(os.curdir,params_vel.output_directory,"Rapid_Model/Velocity_Model")
+shared.verify_user_dirs([outdir])
+gen_cords.main(outdir=outdir)
 
 print('Generating model params and cords. Complete.')
 

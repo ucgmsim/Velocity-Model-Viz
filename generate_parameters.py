@@ -71,8 +71,8 @@ class Domain:
             self.FLO = flo
 
 
-        self.NX = self.i_divide(2*self.EXTENT_X, self.HH)
-        self.NY = self.i_divide(2*self.EXTENT_Y, self.HH)
+        self.NX = self.i_divide(self.EXTENT_X, self.HH)
+        self.NY = self.i_divide(self.EXTENT_Y, self.HH)
         self.NZ = self.i_divide(self.EXTENT_ZMAX, self.HH)
 
         extent_x = self.EXTENT_X

@@ -1,5 +1,9 @@
+
 import numpy as np
 import sys
+import qcore
+sys.path.append(qcore.path)
+
 import wct
 import argparse
 import os

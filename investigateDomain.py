@@ -2,6 +2,9 @@
 # load in libraries
 from subprocess import call
 import numpy as np
+import sys
+import qcore
+sys.path.append(qcore.path)
 import wct
 
 # prescribe the domain limits, the box

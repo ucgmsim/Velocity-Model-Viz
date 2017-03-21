@@ -3,7 +3,10 @@
 from subprocess import call
 import numpy as np
 import os
-#import shared
+import sys
+import qcore
+sys.path.append(qcore.path)
+import shared
 
 # prescribe the domain limits, the box
 class domainLimits:

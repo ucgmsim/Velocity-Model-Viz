@@ -1,13 +1,16 @@
+#!/usr/bin/python2
+
 import sys
 import os
 import time
 import generate_parameters as gp
 import shutil
 import shared
+sys.path.append(os.path.abspath(os.path.curdir))
 
 if __name__ == '__main__':        
     if not os.path.exists(gp.params_vel):
-        print "Error: % must be in the directory" %params_vel
+        print "Error: % must be in the directory" %gp.params_vel
         sys.exit(0)
 
     import params_vel as pv

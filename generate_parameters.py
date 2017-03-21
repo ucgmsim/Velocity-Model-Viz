@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 
 import numpy as np
 import sys
@@ -25,7 +26,7 @@ class earthquakeSource:
 
 class Domain:
     def __init__(self, eq_src, output_dir, slice_params_dir, model_ver='1.65', min_vs=0.5, topo_type='SQUASHED_TAPERED', hh=0.1,
-                 extent_zmin=0, rot=0, code='rt', extent_x=None,extent_y=None,extent_zmax=None,sim_duration=None,flo=None):
+                 extent_zmin=0.0, rot=0.0, code='rt', extent_x=None,extent_y=None,extent_zmax=None,sim_duration=None,flo=None):
         self.MODEL_VERSION = model_ver
         self.MAG = eq_src.mag
         self.CENTROID_DEPTH = eq_src.centroidDepth
@@ -174,8 +175,15 @@ def main():
     parser.add_argument("--min_vs",type=float, default=0.5)
     parser.add_argument("--topo_type",default='BULLDOZED')
     parser.add_argument("--hh",type=float, default=0.1)
-    parser.add_argument("--extent_zmin",type=float,default=0)
-    parser.add_argument("--rot",type=float,default=0)
+    parser.add_argument("--extent_zmin",type=float,default=0.0)
+
+    parser.add_argument("--extent_x",type=float)
+    parser.add_argument("--extent_y",type=float)
+    parser.add_argument("--extent_zmax",type=float)
+    parser.add_argument("--sim_duration",type=float)
+    parser.add_argument("--flo",type=float)
+
+    parser.add_argument("--rot",type=float,default=0.0)
     parser.add_argument("--code",default='rt')
     parser.add_argument("--output_dir",default="Rapid_Model")
     parser.add_argument("--slice_params_dir",default="SliceParametersNZ/SliceParametersExtracted.txt")
@@ -185,7 +193,7 @@ def main():
     print eq_src
     #output_dir = "Rapid_Model"
     #slice_params_dir = "SliceParametersNZ/SliceParametersExtracted.txt"
-    domain = Domain(eq_src, args.output_dir, args.slice_params_dir,model_ver=args.model_version,min_vs=args.min_vs,topo_type=args.topo_type,hh=args.hh, extent_zmin=args.extent_zmin,rot=args.rot,code=args.code)
+    domain = Domain(eq_src, args.output_dir, args.slice_params_dir,model_ver=args.model_version,min_vs=args.min_vs,topo_type=args.topo_type,hh=args.hh, extent_zmin=args.extent_zmin,rot=args.rot,code=args.code,extent_x=args.extent_x, extent_y=args.extent_y, extent_zmax=args.extent_zmax, sim_duration=args.sim_duration,flo=args.flo)
     domain.write()
     domain.show_output()
     domain.estimate()

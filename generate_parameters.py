@@ -83,7 +83,7 @@ class Domain:
         extent_x = self.EXTENT_X
         while self.NX is None:
             extent_x += 1
-            self.NX = self.i_divide(2*extent_x, self.HH)
+            self.NX = self.i_divide(extent_x, self.HH)
         if extent_x != self.EXTENT_X:
             print "!!! Warning: extent_x is not divisible by hh. Increasing extent_x from %f to %f" %(self.EXTENT_X, extent_x)
             self.EXTENT_X = extent_x
@@ -91,7 +91,7 @@ class Domain:
         extent_y = self.EXTENT_Y
         while self.NY is None:
             extent_y += 1
-            self.NY = seif.i_divide(2*extent_y, self.HH)
+            self.NY = self.i_divide(extent_y, self.HH)
         if extent_y != self.EXTENT_Y:
             print "!!! Warning: extent_y is not divisible by hh. Increasing extent_y from %f to %f" %(self.EXTENT_Y, extent_y)
             self.EXTENT_Y = extent_y

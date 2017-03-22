@@ -2,6 +2,11 @@
 import numpy as np
 import re
 import os 
+from inspect import getsourcefile
+mydir=os.path.dirname(os.path.abspath(getsourcefile(lambda:0)))
+#sys.path.append(os.path.abspath(os.path.curdir))
+
+
 
 #==================================================================================================
 #
@@ -85,7 +90,7 @@ def writeGenerateModelShellScript(Domain):
     fid =  open(fileName,'w')
     fid.write('cd Velocity-Model\n')
     fid.write('rm -rf Rapid_Model\n')
-    fid.write('./NZVM Rapid_Model_Parameters_Generate.txt')
+    fid.write('%s/NZVM Rapid_Model_Parameters_Generate.txt'%mydir)
     fid.close()
     print('Writing generate velocity model shell scrip. Complete.')
 
@@ -102,7 +107,7 @@ def writeExtractShellScript(Domain):
     # write domain parameters to a shell script file that will read the velocity model and extract slices
     fid = open(fileName, 'w')
     fid.write('cd Velocity-Model\n')
-    fid.write('./NZVM Rapid_Model_Parameters_Extract.txt')
+    fid.write('%s/NZVM Rapid_Model_Parameters_Extract.txt'%mydir)
     fid.close()
 
     fileName = 'Velocity-Model/Rapid_Model_Parameters_Extract.txt'
@@ -172,7 +177,7 @@ def investigateVelocityModelDomain(domainLimits):
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    call(['bash', 'GMT/plotDomainBoxOnMap.sh'])
+    call(['bash', '%s/GMT/plotDomainBoxOnMap.sh'%mydir])
     print('Completed GMT plot of velocity model domain.')
 
     # check the velocity model corners are within the allowable limits

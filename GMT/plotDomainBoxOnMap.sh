@@ -2,11 +2,14 @@
 #
 # Script to plot the domain of the velocity model ontop of a map of NZ
 echo "Plotting velocity model domain on map."
+mydir=`dirname $0`
+
 #PATH=$PATH:/Applications/GMT-5.1.2.app/Contents/Resources/bin:/ # add the path to gmt to the PATH variable
-SRTMDIR="GMT/Domain_On_Map/" # path to data
+SRTMDIR="$mydir/Domain_On_Map/" # path to data
 
 velModOutline="Velocity-Model/Rapid_Model/Log/domainOutline.txt"
 
+mkdir -p GMT/Plots
 
 ps=GMT/Plots/VelModDomainBox.ps   #name of output files
 pdf=GMT/Plots/VelModDomainBox.pdf

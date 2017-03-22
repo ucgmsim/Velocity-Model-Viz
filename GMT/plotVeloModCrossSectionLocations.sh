@@ -5,8 +5,8 @@
 echo "Plotting velocity model cross section locations on map."
 
 #PATH=$PATH:/Applications/GMT-5.1.2.app/Contents/Resources/bin:/
-
-SRTMDIR="GMT/Domain_On_Map/" # path to data
+mydir=`dirname $0`
+SRTMDIR="$mydir/Domain_On_Map/" # path to data
 
 velModOutline="Velocity-Model/Rapid_Model/Log/domainOutline.txt"
 

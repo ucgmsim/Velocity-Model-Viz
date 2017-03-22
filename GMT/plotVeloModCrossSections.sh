@@ -3,11 +3,14 @@
 # Script to plot Vs Vp and rho cross sections in GMT
 echo "Plotting velocity model cross sections."
 PATH=$PATH:/Applications/GMT-5.1.2.app/Contents/Resources/bin:/
-
 cp -R Velocity-Model/Rapid_Model/Reformatted_Slices/. GMT/Cross_Sections/Cross_Section_Data
 gmt gmtset FONT_ANNOT_PRIMARY 7
 gmt gmtset FONT_LABEL 9
-SRTMDIR="GMT/Cross_Sections/"
+mydir=`dirname $0`
+echo $mydir
+outdir=`pwd` #where this code is executed
+
+SRTMDIR="$outdir/GMT/Cross_Sections/"
 
 # read file that contains how many slices there are
 while read line; do
@@ -26,16 +29,16 @@ PROJ=-JX17.63c/10.8c
 
 
 ################# Vs
-ps="GMT/Plots/CrossSection${sliceNum}_vs.ps"
-pdf="GMT/Plots/CrossSection${sliceNum}_vs.pdf"
+ps="$outdir/GMT/Plots/CrossSection${sliceNum}_vs.ps"
+pdf="$outdir/GMT/Plots/CrossSection${sliceNum}_vs.pdf"
 
 sliceData=${SRTMDIR}"Cross_Section_Data/ExtractedSlice${sliceNum}_Vs.txt";
 
 gmt psbasemap $AREA $PROJ -Bxa1f0.25+l'Latitude or Longitude' -Bya10f2.5+l'Elevation (km)' -BNesW -P -K -Y+16.5c -X+2.4c > $ps
 
 # make CPT files (if necessary)
-BASECPT_VS_PLOT=GMT/CPT/Vs_Plot.cpt
-BASECPT_VS_BAR=GMT/CPT/Vs_Bar.cpt
+BASECPT_VS_PLOT=$mydir/CPT/Vs_Plot.cpt
+BASECPT_VS_BAR=$mydir/CPT/Vs_Bar.cpt
 ZMIN=0.25
 ZMAX=5.25
 ZINC=0.01
@@ -55,15 +58,15 @@ ps2pdf $ps $pdf
 rm $ps
 
 ################# Vp
-ps="GMT/Plots/CrossSection${sliceNum}_vp.ps"
-pdf="GMT/Plots/CrossSection${sliceNum}_vp.pdf"
+ps="$outdir/GMT/Plots/CrossSection${sliceNum}_vp.ps"
+pdf="$outdir/GMT/Plots/CrossSection${sliceNum}_vp.pdf"
 sliceData=${SRTMDIR}"Cross_Section_Data/ExtractedSlice${sliceNum}_Vp.txt";
 
 gmt psbasemap $AREA $PROJ -Bxa1f0.25+l'Latitude or Longitude' -Bya10f2.5+l'Elevation (km)' -BNesW -P -K -Y+16.5c -X+2.4c > $ps
 
 # make CPT files (if necessary)
-BASECPT_VP_PLOT=GMT/CPT/Vp_Plot.cpt
-BASECPT_VP_BAR=GMT/CPT/Vp_Bar.cpt
+BASECPT_VP_PLOT=$mydir/CPT/Vp_Plot.cpt
+BASECPT_VP_BAR=$mydir/CPT/Vp_Bar.cpt
 ZMIN=1.5
 ZMAX=9.5
 ZINC=0.01
@@ -83,16 +86,16 @@ ps2pdf $ps $pdf
 rm $ps
 
 ################# Vs
-ps="GMT/Plots/CrossSection${sliceNum}_rho.ps"
-pdf="GMT/Plots/CrossSection${sliceNum}_rho.pdf"
+ps="$outdir/GMT/Plots/CrossSection${sliceNum}_rho.ps"
+pdf="$outdir/GMT/Plots/CrossSection${sliceNum}_rho.pdf"
 
 sliceData=${SRTMDIR}"Cross_Section_Data/ExtractedSlice${sliceNum}_Rho.txt";
 
 gmt psbasemap $AREA $PROJ -Bxa1f0.25+l'Latitude or Longitude' -Bya10f2.5+l'Elevation (km)' -BNesW -P -K -Y+16.5c -X+2.4c > $ps
 
 # make CPT files (if necessary)
-BASECPT_RHO_PLOT=GMT/CPT/Rho_Plot.cpt
-BASECPT_RHO_BAR=GMT/CPT/Rho_Bar.cpt
+BASECPT_RHO_PLOT=$mydir/CPT/Rho_Plot.cpt
+BASECPT_RHO_BAR=$mydir/CPT/Rho_Bar.cpt
 ZMIN=1.6
 ZMAX=3.6
 ZINC=0.01

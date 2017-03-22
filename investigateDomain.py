@@ -6,6 +6,8 @@ import sys
 import qcore
 sys.path.append(qcore.path)
 import wct
+from inspect import getsourcefile
+mydir=os.path.dirname(abspath(getsourcefile(lambda:0)))
 
 # prescribe the domain limits, the box
 class domainLimits:
@@ -41,7 +43,7 @@ for i in range(0, 4):
     corners.Lat[i]
 
 
-call(['bash', 'GMT/plotDomainBoxOnMapInterrogation.sh'])
+call(['bash', os.path.join(mydir,'GMT/plotDomainBoxOnMapInterrogation.sh')])
 
 db = wct.WallClockDB()
 (maxT,avgT,minT) = db.estimate_wall_clock_time(Domain.NX,Domain.NY,Domain.NZ,Domain.SIM_DURATION,numCores)

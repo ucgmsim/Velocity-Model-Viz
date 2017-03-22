@@ -1,3 +1,4 @@
+#!/usr/bin/python2
 
 # load in libraries
 from subprocess import call
@@ -6,6 +7,10 @@ import os
 import sys
 import qcore
 sys.path.append(qcore.path)
+from inspect import getsourcefile
+mydir=os.path.dirname(os.path.abspath(getsourcefile(lambda:0)))
+sys.path.append(os.path.abspath(os.path.curdir))
+
 import shared
 
 # prescribe the domain limits, the box
@@ -45,8 +50,8 @@ from velModFunctions import convertSlicesForGMTPlotting
 convertSlicesForGMTPlotting(sliceParameters)
 call(['mkdir', 'GMT/Cross_Sections'])
 call(['mkdir', 'GMT/Cross_Sections/Cross_Section_Data'])
-call(['bash', 'GMT/plotVeloModCrossSections.sh'])
-call(['bash', 'GMT/plotVeloModCrossSectionLocations.sh'])
+call(['bash', os.path.join(mydir,'GMT/plotVeloModCrossSections.sh')])
+call(['bash', os.path.join(mydir,'GMT/plotVeloModCrossSectionLocations.sh')])
 from velModFunctions import combinePDFs
 combinePDFs()
 

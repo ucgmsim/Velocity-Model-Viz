@@ -61,6 +61,7 @@ call(['mkdir', 'Rapid_Model'])
 print('Moving finalised velocity model.')
 
 call(['mv', 'Velocity-Model/Rapid_Model', 'Rapid_Model'])
+call(['chmod', '-R','g+rwx', 'Rapid_Model'])
 print('Moving finalised velocity model. Complete.')
 print('Generating model params and cords.')
 import gen_cords

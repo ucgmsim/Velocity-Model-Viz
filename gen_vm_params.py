@@ -117,7 +117,7 @@ class Domain:
     def write(self):
         with open('params_vel.py', 'w') as fid:
 
-            fid.write("# If you edited this file manually, run 'validate_paramters.py' for integrity check !!!\n\n")
+            fid.write("# If you edited this file manually, run 'test_vm_params.py' for integrity check !!!\n\n")
             fid.write("# Section I. Basic parameters (Manual Edit allowed)\n")
             fid.write("mag = '{0:1.1f}'\n".format(self.MAG))
             fid.write("centroidDepth = '{0:3.2f}'\n".format(self.CENTROID_DEPTH))

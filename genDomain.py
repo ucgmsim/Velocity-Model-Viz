@@ -5,8 +5,9 @@ from subprocess import call
 import numpy as np
 import os
 import sys
-import qcore
-sys.path.append(qcore.path)
+#import qcore
+#sys.path.append(qcore.path) #should be done via PYTHONPATH
+
 from inspect import getsourcefile
 mydir=os.path.dirname(os.path.abspath(getsourcefile(lambda:0)))
 sys.path.append(os.path.abspath(os.path.curdir))
@@ -48,10 +49,13 @@ print('Extracting slices from velocity model. Complete.')
 # convert extracted slices for plotting in GMT
 from velModFunctions import convertSlicesForGMTPlotting
 convertSlicesForGMTPlotting(sliceParameters)
+
 call(['mkdir', 'GMT/Cross_Sections'])
 call(['mkdir', 'GMT/Cross_Sections/Cross_Section_Data'])
 call(['bash', os.path.join(mydir,'GMT/plotVeloModCrossSections.sh')])
+
 call(['bash', os.path.join(mydir,'GMT/plotVeloModCrossSectionLocations.sh')])
+
 from velModFunctions import combinePDFs
 combinePDFs()
 

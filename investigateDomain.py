@@ -3,8 +3,9 @@
 from subprocess import call
 import numpy as np
 import sys
-import qcore
-sys.path.append(qcore.path)
+#import qcore
+#sys.path.append(qcore.path) #needs to be done via PYTHONPATH
+
 import wct
 from inspect import getsourcefile
 mydir=os.path.dirname(abspath(getsourcefile(lambda:0)))

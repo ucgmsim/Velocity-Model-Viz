@@ -2,8 +2,8 @@
 
 import numpy as np
 import sys
-import qcore
-sys.path.append(qcore.path)
+#import qcore
+#sys.path.append(qcore.path) #qcore path should have been added to PYTHONPATH
 
 import wct
 import argparse
@@ -171,7 +171,7 @@ def main():
     parser.add_argument("lon",type=float)
     parser.add_argument("lat",type=float)
 
-    parser.add_argument("--model_version", default='1.65_NZ')
+    parser.add_argument("--model_version", default='1.65')
     parser.add_argument("--min_vs",type=float, default=0.5)
     parser.add_argument("--topo_type",default='BULLDOZED')
     parser.add_argument("--hh",type=float, default=0.1)

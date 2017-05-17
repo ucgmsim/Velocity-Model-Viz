@@ -3,7 +3,7 @@
 import sys
 import os
 import time
-import gen_vm_params as gp
+import config_vm as gp
 import shutil
 import shared
 sys.path.append(os.path.abspath(os.path.curdir))

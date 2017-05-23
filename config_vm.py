@@ -138,9 +138,9 @@ class Domain:
             fid.write("extent_zmax = '{0}'\n".format(self.EXTENT_ZMAX))
             fid.write("extent_zmin = '{0}'\n".format(self.EXTENT_ZMIN))
             fid.write("sim_duration = '{0}'\n".format(self.T_MAX))
-            fid.write("flo = '{0}'\n\n".format(self.FLO))
 
             fid.write("# Section III. Automated values. DO NOT EDIT (Manual changes will be ignored)\n")
+            fid.write("flo = '{0}'\n\n".format(self.FLO))
             fid.write("nx = '{0:4.0f}'\n".format(self.NX)) 
             fid.write("ny = '{0:4.0f}'\n".format(self.NY))
             fid.write("nz = '{0:3.0f}'\n".format(self.NZ))

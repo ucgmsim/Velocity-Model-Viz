@@ -16,7 +16,7 @@ if __name__ == '__main__':
     import params_vel as pv
     
     eq_src = gp.earthquakeSource(pv.mag,pv.centroidDepth,pv.MODEL_LON,pv.MODEL_LAT)
-    domain = gp.Domain(eq_src, pv.output_directory, pv.extracted_slice_parameters_directory, model_ver=pv.model_version, min_vs=float(pv.min_vs), topo_type=pv.topo_type, hh=float(pv.hh), extent_zmin=float(pv.extent_zmin), rot=float(pv.MODEL_ROT), code=pv.code, extent_x=float(pv.extent_x), extent_y=float(pv.extent_y), extent_zmax=float(pv.extent_zmax),sim_duration=float(pv.sim_duration),flo=float(pv.flo))
+    domain = gp.Domain(eq_src, pv.output_directory, pv.extracted_slice_parameters_directory, model_ver=pv.model_version, min_vs=float(pv.min_vs), topo_type=pv.topo_type, hh=float(pv.hh), extent_zmin=float(pv.extent_zmin), rot=float(pv.MODEL_ROT), code=pv.code, extent_x=float(pv.extent_x), extent_y=float(pv.extent_y), extent_zmax=float(pv.extent_zmax),sim_duration=float(pv.sim_duration))
     #params_vel_backup = '%s.%s'%(gp.params_vel,time.strftime('%Y%m%d_%H%M%S'))
     params_vel_backup = '%s.%s'%(gp.params_vel,'bak')
     print "#####################   Backing up %s to %s"%(gp.params_vel,params_vel_backup)

@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 
 # load in libraries
 from subprocess import call

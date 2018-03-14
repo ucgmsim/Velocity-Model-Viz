@@ -68,11 +68,11 @@ call(['mv', 'Velocity-Model/Rapid_Model', 'Rapid_Model'])
 call(['chmod', '-R','g+rwx', 'Rapid_Model'])
 print('Moving finalised velocity model. Complete.')
 print('Generating model params and cords.')
-import gen_cords
+from gen_coords import gen_coords
 import params_vel
 outdir = os.path.join(os.curdir,params_vel.output_directory,"Rapid_Model/Velocity_Model")
 shared.verify_user_dirs([outdir])
-gen_cords.main(outdir=outdir)
+gen_coords(outdir=outdir)
 
 print('Generating model params and cords. Complete.')
 

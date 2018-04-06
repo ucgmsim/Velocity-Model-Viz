@@ -5,10 +5,10 @@ import sys
 #import qcore
 #sys.path.append(qcore.path) #qcore path should have been added to PYTHONPATH
 
-import wct
+from qcore import wct
 import argparse
 import os
-import shared
+from qcore import shared
 
 params_vel = 'params_vel.py'
 

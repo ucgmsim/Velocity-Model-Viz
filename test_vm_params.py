@@ -24,7 +24,8 @@ if __name__ == '__main__':
     domain.write()
     print "#####################  %s updated" %gp.params_vel
     shared.exe('diff -y %s %s'%(params_vel_backup,gp.params_vel))
-    domain.estimate()
+    #TODO:the old estimated method is outdated. either remove the line below or update it to fit the newest method
+    #domain.estimate()
 
 
 

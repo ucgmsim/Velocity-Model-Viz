@@ -1,98 +1,312 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
+
 
 # load in libraries
 from subprocess import call
 import numpy as np
 import os
 import sys
-#import qcore
-#sys.path.append(qcore.path) #should be done via PYTHONPATH
 
-from inspect import getsourcefile
-mydir=os.path.dirname(os.path.abspath(getsourcefile(lambda:0)))
-sys.path.append(os.path.abspath(os.path.curdir))
+def main(): 
+    # =============================================================================
+    if len(sys.argv) == 1:
+        sys.exit("Please provide a parameters text file. Exiting.")
+    #=============================================================================
+    paramsFileName = sys.argv[1]
+    
+    
+    # use parametric functions to define velocity model domain parameters
+    from velModFunctions import readDomainExtents
+    Domain = readDomainExtents(paramsFileName.replace('.py',''))
+    
+    # clean the CD
+    call(['rm', '-rf', Domain.OUTPUT_DIR])
+    call(['rm', '-rf', 'temp'])
+    call(['mkdir', Domain.OUTPUT_DIR])
+    
+    
+    # make symlink for NZVM data 
+    dst = 'Data'
+    if not os.path.exists(dst):
+        src = 'Velocity-Model/Data'
+        os.symlink(src, dst)
+        
+    if Domain.INVESTIGATION_TYPE == 'AUTO_EXTRACT':
+        from velModFunctions import calcModelCorners
+        corners = calcModelCorners(Domain)
+        
+        from velModFunctions import writeGenerateExtractSlicesAutoShellScript
+        writeGenerateExtractSlicesAutoShellScript(Domain)
+    
+        # Plot the domain on the map 
+        import subprocess 
+        # calling from subprocess can supress GMT warnings 
+        exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR]
+        p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        rtrncode = p.wait()
+        print ("Completed plotting of domain on map.")
+    
+        # write the Cross section file
+        from velModFunctions import writeSliceParametersFileExtractAuto
+        sliceParameters = writeSliceParametersFileExtractAuto(Domain)
+        
+        # Generate VM
+        vmParametersFile = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+        call(['./Velocity-Model/NZVM', vmParametersFile])
+        
+        # write the extract VM config file
+        from velModFunctions import writeExtractSlicesAutoShellScript
+        writeExtractSlicesAutoShellScript(Domain)
+        
+        # Call extract from VM
+        vmParametersFile = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+        call(['./Velocity-Model/NZVM', vmParametersFile])
+    
+        
+        # move extracted slices into the output directory
+        call(['cp', '-r', 'temp/Extracted_Slices',Domain.OUTPUT_DIR])
+        
+        # convert slices for plotting
+        from velModFunctions import convertSlicesForGMTPlottingAutoExtracted
+        convertSlicesForGMTPlottingAutoExtracted(sliceParameters,Domain)
+        
+        # plot slices 
+        dataDirectory = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
+        call(['bash', 'GMT/plotVeloModCrossSections.sh',dataDirectory])
+        
+        # plot slice locations 
+        import subprocess 
+        # calling from subprocess can supress GMT warnings 
+        exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
+        p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        rtrncode = p.wait()
+        print ("Completed plotting of slice locations on map.")
+    
+        # concatenate into summary PDF
+        from velModFunctions import combinePDFsAuto
+        combinePDFsAuto(Domain,sliceParameters)
+        print ("Completed concatenation of PDFs.")
+        
+        # remove unnecessary files
+        fileName = os.path.join(Domain.OUTPUT_DIR,'domainOutline.txt')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'VelModDomainBox.ps')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'PlotParameters.txt')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
+        call(['rm','-rf', fileName])
+        call(['rm', '-rf', 'temp'])
+        call(['rm','-rf', 'gmt.conf'])
+        call(['rm','-rf', 'gmt.history'])
+        print ("Process complete.")
+    
+    
+    elif Domain.INVESTIGATION_TYPE == 'AUTO_GENERATE':
+        from velModFunctions import calcModelCorners
+        corners = calcModelCorners(Domain)
+        
+        from velModFunctions import writeGenerateSlicesAutoShellScript
+        writeGenerateSlicesAutoShellScript(Domain)
+        
+        # write the Cross section file
+        from velModFunctions import writeSliceParametersFileAuto
+        sliceParameters = writeSliceParametersFileAuto(Domain)
+        
+        # extract from VM
+        vmParametersFile = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+        call(['./Velocity-Model/NZVM', vmParametersFile])
+        
+        
+        # move extracted slices into the output directory
+        call(['cp', '-r', 'temp/Generated_Slices',Domain.OUTPUT_DIR])
+        print("Generated slice files moved.")
+        
+        # convert slices for plotting
+        from velModFunctions import convertSlicesForGMTPlottingAutoGenerated
+        convertSlicesForGMTPlottingAutoGenerated(sliceParameters,Domain)
+        
+        # plot slices 
+        dataDirectory = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
+        call(['bash', 'GMT/plotVeloModCrossSections.sh',dataDirectory])
+        
+        # plot slice locations 
+        import subprocess 
+        # calling from subprocess can supress GMT warnings 
+        exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
+        p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+        rtrncode = p.wait()
+        print ("Completed plotting of slice locations on map.")
+    
+        # concatenate into summary PDF
+        from velModFunctions import combinePDFsAuto
+        combinePDFsAuto(Domain,sliceParameters)
+        print ("Completed concatenation of PDFs.")
+        
+        # remove unnecessary files
+        fileName = os.path.join(Domain.OUTPUT_DIR,'domainOutline.txt')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'VelModDomainBox.ps')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'PlotParameters.txt')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
+        call(['rm','-rf', fileName])
+        call(['rm', '-rf', 'temp'])
+        call(['rm','-rf', 'gmt.conf'])
+        call(['rm','-rf', 'gmt.history'])
+        print ("Process complete.")
+    
+    
+    
+    elif (Domain.INVESTIGATION_TYPE == "USER_GENERATE"):
+        from velModFunctions import readSliceParametersFile
+        from velModFunctions import writeGenerateSlicesAutoShellScriptSpecificSlices
+        from velModFunctions import convertSlicesForGMTPlottingAutoGeneratedMulti
+        from velModFunctions import combinePDFsAuto
+        import subprocess 
+    
+    
+        for i in range(0, len(Domain.SLICE_PARAMETERS_TEXTFILES)):
+            sliceParameters = readSliceParametersFile(Domain,Domain.SLICE_PARAMETERS_TEXTFILES[i])
+            writeGenerateSlicesAutoShellScriptSpecificSlices(Domain,Domain.SLICE_PARAMETERS_TEXTFILES[i])
+            vmParametersFile = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+            call(['./Velocity-Model/NZVM', vmParametersFile])
+            
+            # move extracted slices into the output directory
+            call(['cp', '-r', 'temp/Generated_Slices',Domain.OUTPUT_DIR])
+            print("Generated slice files moved.")
+            
+            # convert slices for plotting
+            convertSlicesForGMTPlottingAutoGeneratedMulti(sliceParameters,Domain)
+            
+            # plot slices 
+            dataDirectory = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
+            call(['bash', 'GMT/plotVeloModCrossSections.sh',dataDirectory])
+            
+            # plot slice locations 
+            # calling from subprocess can supress GMT warnings 
+            exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
+            p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+            rtrncode = p.wait()
+            print ("Completed plotting of slice locations on map.")
+    
+            # concatenate into summary PDF
+            
+            combinePDFsAuto(Domain,sliceParameters)
+            print ("Completed concatenation of PDFs.")
+            dirName = os.path.join(Domain.OUTPUT_DIR,'Slice_set_{0}'.format(i+1))
+        
+            call(['mkdir', dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'Generated_Slices'),dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'CrossSection_vp_slices.pdf'), dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'CrossSection_vs_slices.pdf'), dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'CrossSection_rho_slices.pdf'), dirName])
+            call(['cp', Domain.SLICE_PARAMETERS_TEXTFILES[i], dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'VelModDomainBox.pdf'), dirName])
+    
+            # remove unnecessary files
+            fileName = os.path.join(Domain.OUTPUT_DIR,'VelModDomainBox.ps')
+            call(['rm', fileName])
+            fileName = os.path.join(Domain.OUTPUT_DIR,'PlotParameters.txt')
+            call(['rm', fileName])
+            fileName = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+            call(['rm', fileName])
+            fileName = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
+            call(['rm','-rf', fileName])
+            call(['rm', '-rf', 'temp'])
+        
+        # remove unnecessary files
+        call(['rm','-rf', 'gmt.conf'])
+        call(['rm','-rf', 'gmt.history'])
+        print ("Process complete.")
+        
+    elif (Domain.INVESTIGATION_TYPE == "USER_EXTRACT"):
+        from velModFunctions import readSliceParametersFileUserExtract
+        from velModFunctions import writeGenerateExtractSlicesAutoShellScript
+        from velModFunctions import convertSlicesForGMTPlottingAutoExtracted
+        from velModFunctions import combinePDFsAuto
+        from velModFunctions import writeExtractSlicesAutoShellScriptUserSlices
+        from velModFunctions import calcModelCorners
+        import subprocess 
+    
+        corners = calcModelCorners(Domain)
+                
+        sliceParameters = readSliceParametersFileUserExtract(Domain,Domain.SLICE_PARAMETERS_TEXTFILES[i])
+            
+        writeGenerateExtractSlicesAutoShellScript(Domain)
+        vmParametersFile = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+           
+        call(['./Velocity-Model/NZVM', vmParametersFile])
+    
+        for i in range(0,2):# len(Domain.SLICE_PARAMETERS_TEXTFILES)):
+            # write the extract VM config file
+            writeExtractSlicesAutoShellScriptUserSlices(Domain,Domain.SLICE_PARAMETERS_TEXTFILES[i])
+            
+            # Call extract from VM
+            vmParametersFile = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+            call(['./Velocity-Model/NZVM', vmParametersFile])
+        
+        
+        # move extracted slices into the output directory
+            call(['cp', '-r', 'temp/Extracted_Slices',Domain.OUTPUT_DIR])
+            print("Extracted slice files moved.")
+            
+            # convert slices for plotting
+    
+            convertSlicesForGMTPlottingAutoExtracted(sliceParameters,Domain)
+            
+            # plot slices 
+            dataDirectory = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
+            call(['bash', 'GMT/plotVeloModCrossSections.sh',dataDirectory])
+            
+            # plot slice locations 
+            import subprocess 
+            # calling from subprocess can supress GMT warnings 
+            exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
+            p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+            rtrncode = p.wait()
+            print ("Completed plotting of slice locations on map.")
+    
+            # concatenate into summary PDF
+            combinePDFsAuto(Domain,sliceParameters)
+            print ("Completed concatenation of PDFs.")
+            
+            dirName = os.path.join(Domain.OUTPUT_DIR,'Slice_set_{0}'.format(i+1))
+            call(['mkdir', dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'Extracted_Slices'),dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'CrossSection_vp_slices.pdf'), dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'CrossSection_vs_slices.pdf'), dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'CrossSection_rho_slices.pdf'), dirName])
+            call(['cp', Domain.SLICE_PARAMETERS_TEXTFILES[i], dirName])
+            call(['mv', os.path.join(Domain.OUTPUT_DIR,'VelModDomainBox.pdf'), dirName])
+    
+            # remove unnecessary files
+            fileName = os.path.join(Domain.OUTPUT_DIR,'VelModDomainBox.ps')
+            call(['rm', fileName])
+            fileName = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
+            call(['rm', fileName])
+            fileName = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
+            call(['rm','-rf', fileName])
+        
+        fileName = os.path.join(Domain.OUTPUT_DIR,'PlotParameters.txt')
+        call(['rm', fileName])
+        fileName = os.path.join(Domain.OUTPUT_DIR,'domainOutline.txt')
+        call(['rm', fileName])
+        dirName = os.path.join(Domain.OUTPUT_DIR,'VM_Binaries')
+        call(['mkdir', dirName])
+        call(['mv', 'temp',dirName])
+        
+        # remove unnecessary files
+        call(['rm','-rf', 'gmt.conf'])
+        call(['rm','-rf', 'gmt.history'])
+        print ("Process complete.")
 
-import shared
+if __name__ == "__main__":
+    main()
 
-# prescribe the domain limits, the box
-class domainLimits:
-    latMax = -33
-    latMin = -48
-    lonMin = 165
-    lonMax = 180
-
-# use parametric functions to define velocity model domain parameters
-from velModFunctions import readDomainExtents
-Domain = readDomainExtents()
-
-# write a shell script to call velocity model code
-from velModFunctions import writeGenerateModelShellScript
-writeGenerateModelShellScript(Domain)
-
-# execute shell script to generate velocity model
-print('Generating velocity model.')
-call(['bash', 'generateVeloModel.sh'])
-print('Generating velocity model. Complete.')
-
-
-# read the velocity model corners file and plot the domain on a map
-from velModFunctions import investigateVelocityModelDomain
-sliceParameters = investigateVelocityModelDomain(domainLimits)
-
-# generate shell script to extract slices
-from velModFunctions import writeExtractShellScript
-writeExtractShellScript(Domain)
-print('Extracting slices from velocity model.')
-call(['bash', 'extractVeloModel.sh'])
-print('Extracting slices from velocity model. Complete.')
-
-# convert extracted slices for plotting in GMT
-from velModFunctions import convertSlicesForGMTPlotting
-convertSlicesForGMTPlotting(sliceParameters)
-
-call(['mkdir', 'GMT/Cross_Sections'])
-call(['mkdir', 'GMT/Cross_Sections/Cross_Section_Data'])
-call(['bash', os.path.join(mydir,'GMT/plotVeloModCrossSections.sh')])
-
-call(['bash', os.path.join(mydir,'GMT/plotVeloModCrossSectionLocations.sh')])
-
-from velModFunctions import combinePDFs
-combinePDFs()
-
-# Relocate files and remove generated components
-call(['rm', '-rf', 'Rapid_Model']) # remove folder if already in existence
-call(['mkdir', 'Rapid_Model'])
-print('Moving finalised velocity model.')
-
-call(['mv', 'Velocity-Model/Rapid_Model', 'Rapid_Model'])
-call(['chmod', '-R','g+rwx', 'Rapid_Model'])
-print('Moving finalised velocity model. Complete.')
-print('Generating model params and cords.')
-from qcore import gen_coords
-import params_vel
-outdir = os.path.join(os.curdir,params_vel.output_directory,"Rapid_Model/Velocity_Model")
-shared.verify_user_dirs([outdir])
-gen_coords(outdir=outdir)
-
-print('Generating model params and cords. Complete.')
-
-print('Moving velocity model plots.')
-call(['mv', 'GMT/Plots', 'Rapid_Model'])
-print('Moving velocity model plots. Complete.')
-
-
-print('Removing generated scripts.')
-call(['rm', 'extractVeloModel.sh'])
-call(['rm', 'Velocity-Model/Rapid_Model_Parameters_Generate.txt'])
-call(['rm', 'generateVeloModel.sh'])
-call(['rm', 'Velocity-Model/Rapid_Model_Parameters_Extract.txt'])
-call(['rm', '-rf','GMT/Cross_Sections/'])
-call(['rm', '-rf','Velocity-Model/SliceParametersNZ'])
-call(['rm', '-rf','gmt.conf'])
-call(['rm', '-rf','gmt.history'])
-call(['cp', 'params_vel.py', 'Rapid_Model/Rapid_Model/Velocity_Model/'])
-
-print('Rapid model generation complete.')
-
-
-
+    

@@ -1,51 +1,53 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # load in libraries
 from subprocess import call
 import numpy as np
 import sys
-#import qcore
-#sys.path.append(qcore.path) #needs to be done via PYTHONPATH
+import os 
 
-import wct
-from inspect import getsourcefile
-mydir=os.path.dirname(abspath(getsourcefile(lambda:0)))
+def main(): 
+    # =============================================================================
+     if len(sys.argv) == 1:
+         sys.exit("Please provide a parameters text file. Exiting.")
+    # =============================================================================
+    
+    paramsFileName = sys.argv[1]
+    # use parametric functions to define velocity model domain parameters
+    from velModFunctions import readDomainExtents
+    Domain = readDomainExtents(paramsFileName.replace('.py',''))
+    
+    
+    # clean the CD
+    call(['rm', '-rf', Domain.OUTPUT_DIR])
+    call(['rm', '-rf', 'temp'])
+    call(['mkdir', Domain.OUTPUT_DIR])
+    
+    from velModFunctions import calcModelCorners
+    corners = calcModelCorners(Domain)
+    
+    
+    # Plot the domain on the map 
+    import subprocess 
+    # calling from subprocess can supress GMT warnings 
+    exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR]
+    p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
+    rtrncode = p.wait()
+    print ("Completed plotting of domain on map.")
+    
+    call(['cp', paramsFileName, Domain.OUTPUT_DIR])
+    
+    # remove unnecessary files
+    fileName = os.path.join(Domain.OUTPUT_DIR,'domainOutline.txt')
+    call(['rm', fileName])
+    fileName = os.path.join(Domain.OUTPUT_DIR,'VelModDomainBox.ps')
+    call(['rm', fileName])
+    fileName = os.path.join(Domain.OUTPUT_DIR,'PlotParameters.txt')
+    call(['rm', fileName])
+    call(['rm','-rf', 'gmt.conf'])
+    call(['rm','-rf', 'gmt.history'])
+    
+    print ("Process complete.")
 
-# prescribe the domain limits, the box
-class domainLimits:
-    latMax = -33
-    latMin = -48
-    lonMin = 165
-    lonMax = 180
-numCores = 512
-
-# use parametric functions to define velocity model domain parameters
-from velModFunctions import readDomainExtents
-Domain = readDomainExtents()
-call(['mkdir', 'Domain'])
-call(['cp', 'params_vel.py', 'Domain'])
-
-from velModFunctions import genModelCorners
-corners = genModelCorners(Domain)
-for i in range(0, 4):
-    if (corners.Lon[i]>=domainLimits.lonMax):
-        print('Warning: velocity model corner outside of allowable limits.')
-        break
-    if (corners.Lat[i]>=domainLimits.latMax):
-        print('Warning: velocity model corner outside of allowable limits.')
-        break
-    if (corners.Lon[i]<=domainLimits.lonMin):
-        print('Warning: velocity model corner outside of allowable limits.')
-        break
-    if (corners.Lat[i]<=domainLimits.latMin):
-        print('Warning: velocity model corner outside of allowable limits.')
-        break
-
-        
-    corners.Lat[i]
-
-
-call(['bash', os.path.join(mydir,'GMT/plotDomainBoxOnMapInterrogation.sh')])
-
-db = wct.WallClockDB()
-(maxT,avgT,minT) = db.estimate_wall_clock_time(Domain.NX,Domain.NY,Domain.NZ,Domain.SIM_DURATION,numCores)
+if __name__ == "__main__":
+    main()

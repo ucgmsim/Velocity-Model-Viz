@@ -8,7 +8,7 @@ import os
 
 def main(): 
     # =============================================================================
-     if len(sys.argv) == 1:
+    if len(sys.argv) == 1:
          sys.exit("Please provide a parameters text file. Exiting.")
     # =============================================================================
     
@@ -31,8 +31,10 @@ def main():
     import subprocess 
     # calling from subprocess can supress GMT warnings 
     exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR]
+    #os.system(' '.join(exe))
     p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
     rtrncode = p.wait()
+
     print ("Completed plotting of domain on map.")
     
     call(['cp', paramsFileName, Domain.OUTPUT_DIR])

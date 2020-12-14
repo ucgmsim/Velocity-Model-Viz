@@ -10,8 +10,7 @@ def main():
     # =============================================================================
     if len(sys.argv) == 1:
         sys.exit("Please provide a parameters text file. Exiting.")
-    # =============================================================================
-    
+
     paramsFileName = sys.argv[1]
     # use parametric functions to define velocity model domain parameters
     from velModFunctions import readDomainExtents
@@ -30,9 +29,11 @@ def main():
     # Plot the domain on the map 
     import subprocess 
     # calling from subprocess can supress GMT warnings 
-    exe = [  'GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR]
+    exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR]
+
     p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
     rtrncode = p.wait()
+
     print ("Completed plotting of domain on map.")
     
     call(['cp', paramsFileName, Domain.OUTPUT_DIR])

@@ -34,6 +34,7 @@ def readDomainExtents(paramsFileName):
     
     # parameters that all call types have 
     loadCommand = "from {0} import INVESTIGATION_TYPE, MODEL_VERSION,TOPO_TYPE,MIN_VS,OUTPUT_DIR".format(paramsFileName)
+    print(loadCommand)
     exec(loadCommand,globals()) # load in parameters from file 
     
     Domain.INVESTIGATION_TYPE = INVESTIGATION_TYPE
@@ -321,17 +322,17 @@ def calcModelCorners(Domain):
 
     for i in range(0, 4):
         if (corners.Lon[i]>=domainLimits.lonMax ) & ( corners.Lon[i]<=0):
-            print('BWarning: velocity model corner outside of allowable limits.')
-            sys.exit()
+            print('Warning: velocity model corner outside of allowable NZ limits.')
+            # sys.exit()
         if (corners.Lat[i]>=domainLimits.latMax):
-            print('Warning: velocity model corner outside of allowable limits.')
-            sys.exit()
+            print('Warning: velocity model corner outside of allowable NZ limits.')
+            # sys.exit()
         if (corners.Lon[i]<=domainLimits.lonMin) & ( corners.Lon[i]>=0):
-            print('AWarning: velocity model corner outside of allowable limits.')
-            sys.exit()
+            print('Warning: velocity model corner outside of allowable NZ limits.')
+            # sys.exit()
         if (corners.Lat[i]<=domainLimits.latMin):
-            print('Warning: velocity model corner outside of allowable limits.')
-            sys.exit()
+            print('Warning: velocity model corner outside of allowable NZ limits.')
+            # sys.exit()
     
     fileName = os.path.join(Domain.OUTPUT_DIR,'domainOutline.txt')
     with open(fileName, 'w') as fid:
@@ -1420,14 +1421,14 @@ def gcproj(xf, yf, ref_rad, g0, b0, amat, ainv):
     yg = xp * amat[3] + yp * amat[4] + zp * amat[5]
     zg = xp * amat[6] + yp * amat[7] + zp * amat[8]
 
-
     if zg != 0:
         arg = np.sqrt(xg * xg + yg * yg) / zg
         rlat = 90.0 - np.arctan(arg) / rperd
+       
     if zg < 0:
         rlat = rlat - 180.0
     else:
-        rlat = 0.0
+        rlat = rlat
 
     if xg != 0:
         arg = yg / xg;
@@ -1446,7 +1447,9 @@ def gcproj(xf, yf, ref_rad, g0, b0, amat, ainv):
     if rlon > 180.0:
         rlon = rlon - 360.0
 
+
     coords.rlat = rlat
     coords.rlon = rlon
+
 
     return coords

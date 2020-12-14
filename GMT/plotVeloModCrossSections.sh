@@ -39,7 +39,7 @@ gmt psbasemap $AREA $PROJ -Bxa${majorTickPlotX}"f"${minorTickPlotX}+l'Longitude'
 BASECPT_VS_PLOT=GMT/CPT/Vs2_Plot.cpt
 BASECPT_VS_BAR=GMT/CPT/Vs2_Bar.cpt
 ZMIN=0.25
-ZMAX=3.25
+ZMAX=4.25
 ZINC=0.01
 gmt makecpt -Cjet -T$ZMIN/$ZMAX/$ZINC -Do -M > $BASECPT_VS_PLOT
 ZINC=0.125
@@ -50,7 +50,7 @@ echo "Slice ${sliceNum} Vs" | gmt pstext -R -J -F+cTL -F+f18p -X-2 -Y2 -P -K -O 
 
 gmt psscale -C$BASECPT_VS_BAR -X2 -Y-2 -D8.5/-.5/12.5/0.3h -K -O -Np -Ba${ZINCPLOT}f${ZINC}:"Shear wave velocity, V@-s@- (km/s)": >> $ps
 
-#rm $BASECPT_VS_PLOT $BASECPT_VS_BAR
+rm $BASECPT_VS_PLOT $BASECPT_VS_BAR
 gmt psxy -R -J -O -T >> $ps
 
 ps2pdf $ps $pdf
@@ -61,7 +61,7 @@ ps="$1"/CrossSection${sliceNum}_vp.ps
 pdf="$1"/CrossSection${sliceNum}_vp.pdf
 sliceData="$1"/ExtractedSlice${sliceNum}_Vp.txt
 
-gmt psbasemap $AREA $PROJ -Bxa1f0.25+l'Latitude or Longitude' -Bya10f2.5+l'Elevation (km)' -BNesW -P -K -Y+16.5c -X+2.4c > $ps
+gmt psbasemap $AREA $PROJ -Bxa${majorTickPlotX}"f"${minorTickPlotX}+l'Longitude' -Bya${majorTickPlotZ}"f"${minorTickPlotZ}+l'Elevation - Z (km)' -BNesW -P -K -Y+16.5c -X+2.4c > $ps
 
 # make CPT files (if necessary)
 BASECPT_VP_PLOT=GMT/CPT/Vp_Plot.cpt
@@ -90,7 +90,7 @@ pdf="$1"/CrossSection${sliceNum}_rho.pdf
 
 sliceData="$1"/ExtractedSlice${sliceNum}_Rho.txt
 
-gmt psbasemap $AREA $PROJ -Bxa1f0.25+l'Latitude or Longitude' -Bya10f2.5+l'Elevation (km)' -BNesW -P -K -Y+16.5c -X+2.4c > $ps
+gmt psbasemap $AREA $PROJ -Bxa${majorTickPlotX}"f"${minorTickPlotX}+l'Longitude' -Bya${majorTickPlotZ}"f"${minorTickPlotZ}+l'Elevation - Z (km)' -BNesW -P -K -Y+16.5c -X+2.4c > $ps
 
 # make CPT files (if necessary)
 BASECPT_RHO_PLOT=GMT/CPT/Rho_Plot.cpt

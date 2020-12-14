@@ -54,13 +54,16 @@ DETAIL=-Df
 ALL="$AREA $PROJ"
 
 gmt pscoast $ALL $DETAIL -X$xShift -Y$yShift -Bxa${majorTickPlotX}"f"${minorTickPlotX} -Bya${majorTickPlotX}"f"${minorTickPlotX} -Gc -K -O >> $ps #as above, but now first command so ">" and no "-O" only
-gmt pscoast $ALL $DETAIL -S135/206/235 -K -O >> $ps
+# gmt pscoast $ALL $DETAIL -S135/206/235 -K -O >> $ps
+
+gmt pscoast $ALL $DETAIL -Gdarkseagreen2 -Scornflowerblue -K -O >> $ps 
+
 
 
 # land and topography
 #TOPO=${SRTMDIR}srtm_all_filt_nz.grd
 #ILLU=-I${SRTMDIR}srtm_all_filt_i5_nz.grd
-gmt grdimage $TOPO $PALETTE $ALL -K -O  >> $ps
+# gmt grdimage $TOPO $PALETTE $ALL -K -O  >> $ps
 
 # clear clippath
 gmt pscoast -R -J -O -K -Q >> $ps
@@ -92,6 +95,13 @@ gmt psxy $velModOutline -R -J $PERSP_MAP -W2p,black -O -K >> $ps
 
 velModOutline="GMT/Boundaries/Wellington_Polygon_Wainuiomata_WGS84.txt"
 gmt psxy $velModOutline -R -J $PERSP_MAP -W2p,black -O -K >> $ps
+
+velModOutline="GMT/Boundaries/mackenzie_basin_outline_nzmg.txt"
+gmt psxy $velModOutline -R -J $PERSP_MAP -W2p,black -O -K >> $ps
+
+velModOutline="GMT/Boundaries/wanaka_basin_outline_WGS84.txt"
+gmt psxy $velModOutline -R -J $PERSP_MAP -W2p,black -O -K >> $ps
+
 
 # if plot cross sections required
 if [ "$2" ==  "PlotSliceLocations=true" ]

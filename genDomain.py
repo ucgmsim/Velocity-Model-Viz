@@ -41,7 +41,7 @@ def main():
         # Plot the domain on the map 
         import subprocess 
         # calling from subprocess can supress GMT warnings 
-        exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR]
+        exe = [ 'GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR]
         p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         rtrncode = p.wait()
         print ("Completed plotting of domain on map.")
@@ -72,12 +72,12 @@ def main():
         
         # plot slices 
         dataDirectory = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
-        call(['bash', 'GMT/plotVeloModCrossSections.sh',dataDirectory])
+        call([  'GMT/plotVeloModCrossSections.sh',dataDirectory])
         
         # plot slice locations 
         import subprocess 
         # calling from subprocess can supress GMT warnings 
-        exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
+        exe = [ 'GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
         p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         rtrncode = p.wait()
         print ("Completed plotting of slice locations on map.")
@@ -130,12 +130,12 @@ def main():
         
         # plot slices 
         dataDirectory = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
-        call(['bash', 'GMT/plotVeloModCrossSections.sh',dataDirectory])
+        call([  'GMT/plotVeloModCrossSections.sh',dataDirectory])
         
         # plot slice locations 
         import subprocess 
         # calling from subprocess can supress GMT warnings 
-        exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
+        exe = [ 'GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
         p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
         rtrncode = p.wait()
         print ("Completed plotting of slice locations on map.")
@@ -186,11 +186,11 @@ def main():
             
             # plot slices 
             dataDirectory = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
-            call(['bash', 'GMT/plotVeloModCrossSections.sh',dataDirectory])
+            call([  'GMT/plotVeloModCrossSections.sh',dataDirectory])
             
             # plot slice locations 
             # calling from subprocess can supress GMT warnings 
-            exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
+            exe = [ 'GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
             p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
             rtrncode = p.wait()
             print ("Completed plotting of slice locations on map.")
@@ -262,12 +262,12 @@ def main():
             
             # plot slices 
             dataDirectory = os.path.join(Domain.OUTPUT_DIR,'Reformatted_Slices')
-            call(['bash', 'GMT/plotVeloModCrossSections.sh',dataDirectory])
+            call([  'GMT/plotVeloModCrossSections.sh',dataDirectory])
             
             # plot slice locations 
             import subprocess 
             # calling from subprocess can supress GMT warnings 
-            exe = ['bash','GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
+            exe = [ 'GMT/plotDomainBoxOnMap.sh',Domain.OUTPUT_DIR,"PlotSliceLocations=true"]
             p = subprocess.Popen( exe, stdout=subprocess.PIPE, stderr=subprocess.PIPE )
             rtrncode = p.wait()
             print ("Completed plotting of slice locations on map.")

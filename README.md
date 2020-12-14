@@ -2,10 +2,31 @@
 
 The scripts here form a suite of automated VM plotting tools as a companion to the NZVM.
 
-Prerequisites the compiled NZVM binaries and a working installation of GMT (Generic Mapping tools).
+## Prerequisites 
+
+Prerequsites are: 
+- 1) the compiled NZVM binary 
+- 2) working installation of GMT (Generic Mapping tools). 
+- 3) the python packages numpy and PyPDF2
+
+## General Setup and Usage Instructions
+
+- 1) Clone the Velocity model into this directory.
+
+- 2) cd into Velocity-Model
+
+- 3) execute ```make``` or ```make parallel```
+
+- 4) Install python requirements in ```requirements.txt```  
+
+- 5) execute ```python investigateDomain.py``` or ``` python genDomain.py``` with an appropriate parameters file. Examples can be seen in the directory 'Example-Inputs'. 
+
+See other sections for additional details. 
+
+## Detailed Usage Instructions
 
 There are two main tools avaliable 
-- (1) a script to plot VM transects in a number of differnt ways
+- (1) a script to plot VM transects in a number of different ways
 - (2) a script to plot a VM domain on a map given user specified parameters. 
 
 Velocity transect plotting. There are two main types of transect plotting: 
@@ -65,19 +86,4 @@ For USER_GENERATE the additional parameters are:
 
 
 To plot the VM domain on a map the function ```investigateDomain.py ``` is used which can be called from the command line using ```python investigateDomain.py [vmParametersTextfile]``` where [vmParametersTextfile] is a textfile containing the VM parameters of the format of  AUTO_EXTRACT or AUTO_GENERATE
-
-
-
-
- General Setup Instructions
-
-- 1) Clone the Velocity model into this directory.
-
-- 2) cd into Velocity-Model
-
-- 3) execute 'make' or 'make parallel'
-
-- 4) execute ```python investigateDomain.py``` or ``` python genDomain.py``` with an appropriate parameters file. Examples can be seen in the directory 'Example-Inputs' for some examples. 
-
-
 

@@ -17,9 +17,9 @@ Prerequsites are:
 
 - 3) execute ```make``` or ```make parallel```
 
-- 4) Install python requirements in ```requirements.txt```  
+- 4) Install python requirements in ```requirements.txt```  (e.g. ``` pip install -r requirements.txt```)
 
-- 5) execute ```python investigateDomain.py``` or ``` python genDomain.py``` with an appropriate parameters file. Examples can be seen in the directory 'Example-Inputs'. 
+- 5) execute ```python investigateDomain.py``` or ``` python genDomain.py``` with an appropriate parameters file. Examples can be seen in the directory 'Example-Inputs'. (e.g. ``` python genDomain.py params_vel_korea.py ```)
 
 See other sections for additional details. 
 

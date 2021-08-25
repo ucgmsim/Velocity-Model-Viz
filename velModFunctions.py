@@ -108,8 +108,6 @@ def readDomainExtents(paramsFileName):
 #
 #==================================================================================================
 def writeGenerateSlicesAutoShellScript(Domain):
-
-
     fileName = os.path.join(Domain.OUTPUT_DIR,'Auto_VM_Parameters.txt')
     # write domain parameters to a textfile
     fid =  open(fileName,'w')

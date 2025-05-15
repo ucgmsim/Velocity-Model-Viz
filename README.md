@@ -33,7 +33,7 @@ Velocity transect plotting. There are two main types of transect plotting:
 - the first is where transect locations are automatically determined from a user specified domain (case AUTO); 
 - the second is where the transect locations are given directly by the user (case USER). 
 
-For each of the aforementioned cases there is the option to either generate slices directly (type GENERATE) or to extract velocity transects  (type GENERATE) from VM binary files (which themselves are generated as part of this process for use in ground motion simulation). 
+For each of the aforementioned cases there is the option to either generate slices directly (type _GENERATE) or to extract velocity transects  (type _EXTRACT) from VM binary files (which themselves are generated as part of this process for use in ground motion simulation). 
 
 Each of the different methods for plotting velocity extracts are run the same way by setting parameters in a '.py' file then executing ```python genDomain.py [myParametersFile]``` where  [myParametersFile] is the python file containing user specified parameters. The required parameters for each type are detailed below. 
 
@@ -83,6 +83,23 @@ For AUTO_GENERATE the additional parameters are:
 
 For USER_GENERATE the additional parameters are:
 - SLICE_PARAMETERS_TEXTFILES: a list of slice parameters textfiles to generate velocity transects at
+
+A slice parameters text file should look like:
+
+```
+4
+-45.25558732068825 -43.934782049826765 171.54612887358556 169.27778692624446 0.0 46.0 350 350 
+-44.62356708881172 -43.316095783930336 172.22156934689707 169.96192275279043 0.0 46.0 350 350 
+-43.99154685693519 -42.69740951803391 172.8970098202086 170.64605857933637 0.0 46.0 350 350 
+-43.359526625058656 -42.07872325213748 173.57245029352012 171.3301944058823 0.0 46.0 350 350 
+```
+where each line stands for
+```
+number of slices
+lat1 lat2 lon1 lon2 depth_top depth_bottom res_surface res_depth
+...
+```
+
 
 
 To plot the VM domain on a map the function ```investigateDomain.py ``` is used which can be called from the command line using ```python investigateDomain.py [vmParametersTextfile]``` where [vmParametersTextfile] is a textfile containing the VM parameters of the format of  AUTO_EXTRACT or AUTO_GENERATE

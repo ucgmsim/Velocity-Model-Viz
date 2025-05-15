@@ -84,14 +84,30 @@ For AUTO_GENERATE the additional parameters are:
 For USER_GENERATE the additional parameters are:
 - SLICE_PARAMETERS_TEXTFILES: a list of slice parameters textfiles to generate velocity transects at
 
-A slice parameters text file should look like:
 
+Here is an example combo 
+params_vel_example.py
 ```
-4
--45.25558732068825 -43.934782049826765 171.54612887358556 169.27778692624446 0.0 46.0 350 350 
--44.62356708881172 -43.316095783930336 172.22156934689707 169.96192275279043 0.0 46.0 350 350 
--43.99154685693519 -42.69740951803391 172.8970098202086 170.64605857933637 0.0 46.0 350 350 
--43.359526625058656 -42.07872325213748 173.57245029352012 171.3301944058823 0.0 46.0 350 350 
+INVESTIGATION_TYPE = "USER_GENERATE"
+ORIGIN_LAT = "-43.35805601377026"
+ORIGIN_LON = "171.7875594038442"
+MODEL_ROT = "38.3183225905264"
+MIN_VS = "0.5"
+MODEL_VERSION = "2.06"
+TOPO_TYPE = "SQUASHED_TAPERED"
+OUTPUT_DIR = "/tmp/output"
+EXTENT_X = "232.34383396290647"
+EXTENT_Y = "355.0047402566312"
+EXTENT_ZMAX = "46.0"
+EXTENT_ZMIN = "0"
+SLICE_PARAMETERS_TEXTFILES=["/tmp/slice_params.txt"]
+```
+slice_params.txt 
+```
+3
+-43.5 -44.5 171 172 0 46 350 350
+-43.25 -43.25 171 173.5 0 46 350 350
+-43 -43.75 171 173.5 0 46 350 350
 ```
 where each line stands for
 ```
@@ -99,7 +115,6 @@ number of slices
 lat1 lat2 lon1 lon2 depth_top depth_bottom res_surface res_depth
 ...
 ```
-
 
 
 To plot the VM domain on a map the function ```investigateDomain.py ``` is used which can be called from the command line using ```python investigateDomain.py [vmParametersTextfile]``` where [vmParametersTextfile] is a textfile containing the VM parameters of the format of  AUTO_EXTRACT or AUTO_GENERATE
